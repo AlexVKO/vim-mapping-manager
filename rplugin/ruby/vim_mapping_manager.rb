@@ -1,8 +1,6 @@
 require 'neovim'
 require_relative '../../lib/vim_mapping_manager.rb'
 
-require 'spec/spec_helper.rb'
-
 Neovim.plugin do |plug|
   # Define an autocmd for the BufEnter event on Ruby files.
   plug.autocmd(:BufWritePost, pattern: "*managed_mappings.rb") do |nvim|

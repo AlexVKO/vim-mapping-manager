@@ -1,10 +1,10 @@
-require "vim_mapping_manager/version"
+require_relative "./vim_mapping_manager/version"
 
-require 'vim_mapping_manager/command_helpers.rb'
-require 'vim_mapping_manager/output_file.rb'
-require 'vim_mapping_manager/key_stroke.rb'
-require 'vim_mapping_manager/prefix.rb'
-require 'vim_mapping_manager/normal_command.rb'
+require_relative './vim_mapping_manager/command_helpers.rb'
+require_relative './vim_mapping_manager/output_file.rb'
+require_relative './vim_mapping_manager/key_stroke.rb'
+require_relative './vim_mapping_manager/prefix.rb'
+require_relative './vim_mapping_manager/normal_command.rb'
 
 module VimMappingManager
   extend CommandHelpers
