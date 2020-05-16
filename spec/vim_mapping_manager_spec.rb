@@ -5,8 +5,8 @@ RSpec.describe VimMappingManager do
 
   describe 'Simple mapping' do
     it 'renders prefixes' do
-      described_class.prefix(';', name: 'FuzzyFinder', desc: 'Search everything') do
-        # normal('du', ":saveas #{current_file_path}", desc: "Duplicate current file")
+      described_class.call do
+        prefix(';', name: 'FuzzyFinder', desc: 'Search everything')
       end
 
       expected = <<-EXPECTED
@@ -22,9 +22,13 @@ RSpec.describe VimMappingManager do
     end
 
     it 'renders normal mode mappings'  do
-      described_class.normal('du', ":saveas #{current_file_path}", desc: "Duplicate current file")
+      described_class.call do
+        normal('du', ":saveas #{current_file_path}", desc: "Duplicate current file")
+      end
 
       expected = <<-EXPECTED
+      " Duplicate current file
+      nnoremap <silent> du :saveas <C-R>=expand('%')<CR>
       EXPECTED
 
       renders_properly(described_class.render, expected)
