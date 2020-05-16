@@ -2,21 +2,21 @@
 
 This is a plugin that takes your vim mappings to the next level, by using it you will gain:
 
-- Simplicity, readability, and extensibility.
-- Out-of-the-box integration with vim-which-key
-- Run time checkers and validations. (ex: duplicated mappings)
-- Ability to create Ruby methods to be executed by VIM mappings.
-- Run time helpers.(ex: current_file_path, current_line)
-- Auto-generated documentation.
+- [x] Simplicity, readability, and extensibility.
+- [ ] Out-of-the-box integration with vim-which-key
+- [ ] Run time checkers and validations. (ex: duplicated mappings)
+- [ ] Ability to create Ruby methods to be executed by VIM mappings.
+- [ ] Run time helpers.(ex: current_file_path, current_line)
+- [ ] Auto-generated documentation.
 
 This:
 ```ruby
 normal('<leader>e', 'gg=G', desc: 'indent current file')
 
 prefix(',', name: 'Files', desc: 'Mappings related to file manipulation') do
-  normal('du', ":saveas #{current_file_path}", desc: "Duplicate current file")
+  normal('du', ":saveas #{current_file_path}", desc: 'Duplicate current file', execute: false)
   normal('ct', ':checktime',                   desc: 'Reload the file')
-  normal('de', ':!rm %',                       desc: 'Delete current file')
+  normal('de', ":!rm #{current_file_path}",    desc: 'Delete current file')
 end
 ```
 
@@ -36,10 +36,10 @@ nmap      , [Files]
 nnoremap <silent> [Files]du :saveas <C-R>=expand('%')<CR>
 
 " Reload the file
-nnoremap <silent> [Files]ct :checktime
+nnoremap <silent> [Files]ct :checktime<CR>
 
 " Delete current file
-nnoremap <silent> [Files]de :!rm %
+nnoremap <silent> [Files]de :!rm <C-R>=expand('%')<CR><CR>
 ```
 ## Usage
 
@@ -47,7 +47,7 @@ Run `:EditMappings`
 
 The mappings configuration file will open.
 
-[Image here]
+![](https://github.com/AlexVKO/vim-mapping-manager/blob/master/docs/example.png)
 
 Once you save this file, the output will be saved to `~/.config/nvim/managed_mappings.vimrc`.
 
