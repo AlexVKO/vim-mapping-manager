@@ -3,32 +3,42 @@ RSpec.describe VimMappingManager do
     expect(VimMappingManager::VERSION).not_to be "0.1.0"
   end
 
-  describe 'Simple mapping' do
-    it 'renders prefixes' do
+  before do
+    OutputFile.reset!
+    VimMappingManager.reset!
+  end
+
+  describe 'Full mapping example' do
+    specify do
       described_class.call do
-        prefix(';', name: 'FuzzyFinder', desc: 'Search everything')
+        normal('<leader>e', 'gg=G<C-O>', desc: 'indent current file')
+
+        prefix(',', name: 'Files', desc: 'Mappings related to file manipulation') do
+          normal('du', ":saveas #{current_file_path}", desc: "Duplicate current file")
+          normal('ct', ':checktime',                   desc: 'Reload the file')
+          normal('de', ':!rm %',                       desc: 'Delete current file')
+        end
       end
 
       expected = <<-EXPECTED
-       " -----------------------------------------------------------------------------
-       " Prefix: FuzzyFinder, key: ;
-       " Search everything
-       " -----------------------------------------------------------------------------
-       nnoremap  [FuzzyFinder] <Nop>
-       nmap      ; [Files]
-      EXPECTED
+       " indent current file
+       nnoremap <silent> <leader>e gg=G<C-O>
 
-      renders_properly(described_class.render, expected)
-    end
+       " ----------------------------------------------------------------
+       " Prefix: Files, key: ,
+       " Mappings related to file manipulation
+       " ----------------------------------------------------------------
+       nnoremap  [Files] <Nop>
+       nmap      , [Files]
 
-    it 'renders normal mode mappings'  do
-      described_class.call do
-        normal('du', ":saveas #{current_file_path}", desc: "Duplicate current file")
-      end
+       " Duplicate current file
+       nnoremap <silent> [Files]du :saveas <C-R>=expand('%')<CR>
 
-      expected = <<-EXPECTED
-      " Duplicate current file
-      nnoremap <silent> du :saveas <C-R>=expand('%')<CR>
+       " Reload the file
+       nnoremap <silent> [Files]ct :checktime
+
+       " Delete current file
+       nnoremap <silent> [Files]de :!rm %
       EXPECTED
 
       renders_properly(described_class.render, expected)
@@ -41,7 +51,3 @@ RSpec.describe VimMappingManager do
     end
   end
 end
-
-# global.key_stroke('w')
-# KeyStroke<key='w', normal_command: nil, edit_command: nil>
-# global.key_stroke('w').key_stroke('du').normal_command(':saveas #{current_file_path}#{open_command_line_window}')
