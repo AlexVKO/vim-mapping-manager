@@ -15,4 +15,9 @@ class OutputFile
   def self.reset!
     @tempfile = ::Tempfile.new()
   end
+
+  def self.save
+    configuration_path = File.expand_path('~/.config/nvim/managed_mappings.vimrc')
+    File.open(configuration_path, 'w+') { |file| file.write(output) }
+  end
 end

@@ -8,21 +8,22 @@ RSpec.describe NormalCommand do
     let(:key_stroke) { KeyStroke.new('du') }
 
     subject do
-      described_class.new(':saveas <C-R>=expand('%')<CR>', key_stroke, desc: 'Duplicate current file')
+      described_class.new(":saveas <C-R>=expand('%')<CR>", key_stroke, desc: 'Duplicate current file')
     end
 
     specify do
       expected = <<-EXPECTED
-      " Duplicate current file
-      nnoremap du :saveas <C-R>=expand('%')<CR>
+       " Duplicate current file
+       nnoremap <silent> du :saveas <C-R>=expand('%')<CR>
       EXPECTED
 
-      renders_properly(subject.render, expected)
+      subject.render
+      renders_properly(OutputFile.output, expected)
     end
 
     def renders_properly(actual, expected)
-      actual = actual.gsub(/^ */, '').chomp
-      expected = expected.gsub(/^ */, '').chomp
+      actual = actual.gsub(/^ */, '').strip.chomp
+      expected = expected.gsub(/^ */, '').strip.chomp
       expect(actual).to include(expected)
     end
   end

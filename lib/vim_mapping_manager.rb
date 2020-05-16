@@ -12,6 +12,20 @@ module VimMappingManager
 
   @global_key_strokes = {}
 
+  def self.file_config_path
+    File.expand_path('~/.config/nvim/managed_mappings.rb')
+  end
+
+  def self.save
+    reset!
+    file = File.read(file_config_path)
+    call do
+      instance_eval file
+    end
+    render
+    OutputFile.save
+  end
+
   def self.reset!
     @global_key_strokes = {}
   end
@@ -21,6 +35,7 @@ module VimMappingManager
   end
 
   def self.render
+    OutputFile.reset!
     @global_key_strokes.values.each(&:render)
     OutputFile.output
   end

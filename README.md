@@ -29,6 +29,13 @@ Or install it yourself as:
 
 ## Usage
 
+Install and run `:EditMappings`
+
+The mappings configuration file will open.
+
+[Image here]
+
+
 ### Simple usage
 
 ## Contributing
