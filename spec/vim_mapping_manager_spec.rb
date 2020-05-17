@@ -18,6 +18,8 @@ RSpec.describe VimMappingManager do
           normal('ct', ':checktime',                   desc: 'Reload the file')
           normal('de', ':!rm %',                       desc: 'Delete current file')
         end
+
+        command('Reload', ':so ~/.config/nvim/init.vim', desc: 'Reload VIM')
       end
 
       expected = <<-EXPECTED
@@ -39,6 +41,13 @@ RSpec.describe VimMappingManager do
 
        " Delete current file
        nnoremap <silent> [Files]de :!rm %
+
+       " ----------------------------------------------------------------
+       " Commands
+       " ----------------------------------------------------------------
+
+       " Reload VIM
+       command! Reload :so ~/.config/nvim/init.vim
       EXPECTED
 
       renders_properly(described_class.render, expected)

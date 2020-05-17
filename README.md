@@ -98,6 +98,11 @@ move_cursor(1, :word, :left)
 
 ```
 
+### Maping commands
+```ruby
+command('Reload', ':so ~/.config/nvim/init.vim', desc: 'Reload VIM')
+```
+
 ### Integration with https://github.com/liuchengxu/vim-which-key
 TODO
 

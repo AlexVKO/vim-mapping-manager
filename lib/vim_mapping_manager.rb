@@ -3,14 +3,14 @@ require_relative "./vim_mapping_manager/version"
 require_relative './vim_mapping_manager/command_helpers.rb'
 require_relative './vim_mapping_manager/output_file.rb'
 require_relative './vim_mapping_manager/key_stroke.rb'
-require_relative './vim_mapping_manager/prefix.rb'
-require_relative './vim_mapping_manager/normal_command.rb'
+require_relative './vim_mapping_manager/mappers/command_mapper.rb'
 
 module VimMappingManager
   extend CommandHelpers
   class Error < StandardError; end
 
   @global_key_strokes = {}
+  @global_commands = {}
 
   def self.file_config_path
     File.expand_path('~/.config/nvim/managed_mappings.rb')
@@ -28,6 +28,7 @@ module VimMappingManager
 
   def self.reset!
     @global_key_strokes = {}
+    @global_commands = {}
   end
 
   def self.call(&block)
@@ -36,7 +37,11 @@ module VimMappingManager
 
   def self.render
     OutputFile.reset!
+
     @global_key_strokes.values.each(&:render)
+
+    render_command_mappins
+
     OutputFile.output
   end
 
@@ -44,13 +49,28 @@ module VimMappingManager
 
   def self.normal(key, command, desc:, &block)
     find_key_stroke(key).set_normal(command, desc: desc)
-    find_key_stroke(key).instance_exec(&block) if block
+    # find_key_stroke(key).instance_exec(&block) if block
   end
 
   def self.prefix(key, name:, desc:, &block)
     find_key_stroke(key).set_prefix(name: name, desc: desc)
     find_key_stroke(key).prefix.instance_exec(&block) if block
   end
+
+  def self.command(name, command, desc:)
+    raise("A command with #{name} was already defined") if @global_commands[name]
+    @global_commands[name] = Mappers::Command.new(name, command, desc: desc)
+  end
+
+
+  def self.render_command_mappins
+    return if @global_commands.values.none?
+    OutputFile.write "\n\" ----------------------------------------------------------------"
+    OutputFile.write "\" Commands"
+    OutputFile.write '" ----------------------------------------------------------------'
+    @global_commands.values.each(&:render)
+  end
+
 
   def self.find_key_stroke(key)
     @global_key_strokes[key] ||= KeyStroke.new(key, nil)
