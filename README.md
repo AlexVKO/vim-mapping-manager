@@ -1,6 +1,4 @@
-# VimMappingManager
-
-Documenentation WIP
+# VimMappingManager(WIP)
 
 This is a plugin that takes your vim mappings to the next level, by using it you will gain:
 
@@ -160,6 +158,20 @@ source $HOME/.config/nvim/managed_mappings.vimrc
 ### Simple map for command mode
 ```ruby
   normal('<leader>e', 'gg=G', desc: 'Indent current file')
+```
+
+### Map to a ruby function
+```ruby
+
+normal 'U', desc: 'Make current word UPCASE' do
+  # Also could be current_line, current_buffer, current_word, current_line_number, ...
+  current_word = current_word.upcase
+end
+
+normal 'u', desc: 'Make current word downcase' do
+  # Also could be current_buffer, current_word, current_line_number, ...
+  current_word = current_word.upcase
+end
 ```
 
 ### Prefixes (think of it as multiple leaders)
