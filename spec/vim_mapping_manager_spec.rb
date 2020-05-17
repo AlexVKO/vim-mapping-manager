@@ -39,7 +39,7 @@ RSpec.describe VimMappingManager do
       endif
       call which_key#register('<space>', 'g:which_key_map')
       nnoremap <space> :<c-u>WhichKey '<space>'<CR>
-      vnoremap <space> :<c-u>WhichKeyViual '<space>'<CR>
+      vnoremap <space> :<c-u>WhichKeyVisual '<space>'<CR>
 
       "Indent paragraph
       nnoremap <silent> <space>a =ip

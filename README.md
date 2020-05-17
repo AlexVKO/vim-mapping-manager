@@ -2,6 +2,7 @@
 
 This is a plugin that takes your vim mappings to the next level, by using it you will gain:
 
+
 - [x] Simplicity, readability, and extensibility.
 - [x] Out-of-the-box integration with vim-which-key
 - [x] Run time checkers and validations. (ex: duplicated mappings)
@@ -11,38 +12,112 @@ This is a plugin that takes your vim mappings to the next level, by using it you
 
 This:
 ```ruby
-normal('<leader>e', 'gg=G', desc: 'indent current file')
+  leader('<space>') do
+    normal('a', '=ip', desc: 'Indent paragraph')
+    normal('e', 'gg=G<C-O>', desc: 'indent current file')
+  end
 
-visual('s', ":s//g#{move_cursor(2, :chars, :left)}", desc: 'Substitute inside selection')
+  visual('s', ":s//g#{move_cursor(2, :chars, :left)}", desc: 'Substitute inside selection')
 
-prefix(',', name: 'Files', desc: 'Mappings related to file manipulation') do
-  normal('du', ":saveas #{current_file_path}", desc: 'Duplicate current file', execute: false)
-  normal('ct', ':checktime',                   desc: 'Reload the file')
-  normal('de', ":!rm #{current_file_path}",    desc: 'Delete current file')
-end
+  prefix(',', name: 'Files', desc: 'Mappings related to file manipulation') do
+    normal('c', ":saveas #{current_file_path}", desc: "Duplicate current file")
+    normal('r', ':checktime',                   desc: 'Reload the file')
+    normal('d', ':!rm %',                       desc: 'Delete current file')
+  end
+
+  prefix ';', name: 'FuzzyFinder', desc: 'Search everything' do
+    prefix 'r', name: 'Rails', desc: 'Search in Rails directories' do
+      normal 'm', ':Files <cr> app/models/', desc: 'Find for models'
+      normal 'c', ':Files <cr> app/controllers/', desc: 'Find for controllers'
+    end
+  end
+
+  command('Reload', ':so ~/.config/nvim/init.vim', desc: 'Reload VIM')
 ```
 
 Generates this:
 ```
-" indent current file
-nnoremap <silent> <leader>e gg=G<C-O>
+  " ----------------------------------------------------------------
+  " Leader
+  " ----------------------------------------------------------------
+  let mapleader='<space>'
 
-" ----------------------------------------------------------------
-" Prefix: Files, key: ,
-" Mappings related to file manipulation
-" ----------------------------------------------------------------
-nnoremap  [Files] <Nop>
-nmap      , [Files]
+  if !exists('g:which_key_map')
+    let g:which_key_map = {}
+  endif
+  call which_key#register('<space>', 'g:which_key_map')
+  nnoremap <space> :<c-u>WhichKey '<space>'<CR>
+  vnoremap <space> :<c-u>WhichKeyVisual '<space>'<CR>
 
-" Duplicate current file
-nnoremap <silent> [Files]du :saveas <C-R>=expand('%')<CR>
+  "Indent paragraph
+  nnoremap <silent> <space>a =ip
+  call extend(g:which_key_map, {'a':'Indent paragraph'})
 
-" Reload the file
-nnoremap <silent> [Files]ct :checktime<CR>
+  "indent current file
+  nnoremap <silent> <space>e gg=G<C-O>
+  call extend(g:which_key_map, {'e':'Indent current file'})
 
-" Delete current file
-nnoremap <silent> [Files]de :!rm <C-R>=expand('%')<CR><CR>
+  "Substitute inside selection
+  xnoremap <silent> s :s//g<Left><Left>
+
+
+  " ----------------------------------------------------------------
+  " Prefix: Files
+  " Key ,
+  " Mappings related to file manipulation
+  " ----------------------------------------------------------------
+  let g:which_key_map_files = { 'name' : '+Files' }
+  call which_key#register(',', 'g:which_key_map_files')
+  nnoremap , :<c-u>WhichKey ','<CR>
+  vnoremap , :<c-u>WhichKeyVisual ','<CR>
+
+  "Duplicate current file
+  nnoremap <silent> ,c :saveas <C-R>=expand('%')<CR>
+  call extend(g:which_key_map_files, {'c':'Duplicate current file'})
+
+  "Reload the file
+  nnoremap <silent> ,r :checktime
+  call extend(g:which_key_map_files, {'r':'Reload the file'})
+
+  "Delete current file
+  nnoremap <silent> ,d :!rm %
+  call extend(g:which_key_map_files, {'d':'Delete current file'})
+
+
+  " ----------------------------------------------------------------
+  " Prefix: FuzzyFinder
+  " Key ;
+  " Search everything
+  " ----------------------------------------------------------------
+  let g:which_key_map_fuzzyfinder = { 'name' : '+FuzzyFinder' }
+  call which_key#register(';', 'g:which_key_map_fuzzyfinder')
+  nnoremap ; :<c-u>WhichKey ';'<CR>
+  vnoremap ; :<c-u>WhichKeyVisual ';'<CR>
+
+
+    " ----------------------------------------------------------------
+    " Prefix: FuzzyFinder > Rails
+    " Key ;r
+    " Search in Rails directories
+    " ----------------------------------------------------------------
+    let g:which_key_map_fuzzyfinder.r = { 'name' : '+FuzzyFinder > Rails' }
+
+    "Find for models
+    nnoremap <silent> ;rm :Files <cr> app/models/
+    call extend(g:which_key_map_fuzzyfinder.r, {'m':'Find for models'})
+
+    "Find for controllers
+    nnoremap <silent> ;rc :Files <cr> app/controllers/
+    call extend(g:which_key_map_fuzzyfinder.r, {'c':'Find for controllers'})
+
+
+  " ----------------------------------------------------------------
+  " Commands
+  " ----------------------------------------------------------------
+  " Reload VIM
+  command! Reload :so ~/.config/nvim/init.vim
 ```
+
 ## Usage
 
 Run `:EditMappings`
@@ -53,7 +128,7 @@ The mappings configuration file will open.
 
 Once you save this file, the output will be saved to `~/.config/nvim/managed_mappings.vimrc`.
 
-Add this line to your `~/.config/nvim/init.vim`:
+You'll need to add this line to your `~/.config/nvim/init.vim`:
 
 ```
 source $HOME/.config/nvim/managed_mappings.vimrc
@@ -125,19 +200,16 @@ TODO
 
 ## Installation
 
-Add this line to your application's Gemfile:
+Tested with NEOVIM
 
-```ruby
-gem 'vim_mapping_manager'
+### Plugin Manager
+Assuming you are using vim-plug:
+
 ```
+Plug 'leoatchina/vim-which-key' <- Recommended for full experience
 
-And then execute:
-
-    $ bundle install
-
-Or install it yourself as:
-
-    $ gem install vim_mapping_manager
+Plug 'AlexVKO/vim-mapping-manager', { 'do' : ':UpdateRemotePlugins' }
+```
 
 ## Contributing
 
