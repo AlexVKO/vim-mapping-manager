@@ -6,6 +6,7 @@ class Leader < Prefix
 
   def initialize(keystroke)
     @key = keystroke.key
+    @name = 'Leader'
     @key_strokes = {}
     @indentation_level = keystroke.indentation_level
   end

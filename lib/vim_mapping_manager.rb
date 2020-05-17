@@ -48,12 +48,12 @@ module VimMappingManager
 
   private
 
-  def self.visual(key, command, desc:, &block)
-    find_key_stroke(key).set_visual(command, desc: desc)
+  def self.visual(key, command, desc:, filetype: nil, &block)
+    find_key_stroke(key, filetype: filetype).set_visual(command, desc: desc)
   end
 
-  def self.normal(key, command, desc:, &block)
-    find_key_stroke(key).set_normal(command, desc: desc)
+  def self.normal(key, command, desc:, filetype: nil, &block)
+    find_key_stroke(key, filetype: filetype).set_normal(command, desc: desc)
   end
 
   def self.leader(key, &block)
@@ -62,15 +62,14 @@ module VimMappingManager
   end
 
   def self.prefix(key, name:, desc:, filetype: nil, &block)
-    key_stroke = find_key_stroke(key, filetype)
+    key_stroke = find_key_stroke(key, filetype: filetype)
     key_stroke.set_prefix(name: name, desc: desc)
     key_stroke.prefix.instance_exec(&block) if block
-    key_stroke.prefix.filetype = filetype
   end
 
-  def self.command(name, command, desc:)
+  def self.command(name, command, desc:, filetype: nil)
     raise("A command with #{name} was already defined") if @global_commands[name]
-    @global_commands[name] = Mappers::Command.new(name, command, desc: desc)
+    @global_commands[name] = Mappers::Command.new(name, command, desc: desc, filetype: filetype)
   end
 
   def self.render_command_mappins
@@ -81,7 +80,7 @@ module VimMappingManager
     @global_commands.values.each(&:render)
   end
 
-  def self.find_key_stroke(key, filetype = nil)
-    @global_key_strokes[key+filetype.to_s] ||= KeyStroke.new(key, nil)
+  def self.find_key_stroke(key, filetype: nil)
+    @global_key_strokes[key+filetype.to_s] ||= KeyStroke.new(key, filetype: filetype)
   end
 end

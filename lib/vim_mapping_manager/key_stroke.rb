@@ -5,13 +5,24 @@ require_relative '../vim_mapping_manager/leader.rb'
 
 class KeyStroke
   include CommandHelpers
-  attr_reader :key, :leader, :prefix, :normal, :visual, :parent_prefix
+  attr_reader :key, :parent, :filetype,
+    :leader, :prefix, :normal, :visual
+
   attr_accessor :indentation_level
 
-  def initialize(key, parent_prefix = nil, indentation_level: 0)
+  def initialize(key, parent: nil, indentation_level: 0, filetype: nil)
     @key = key
-    @parent_prefix = parent_prefix
+    @parent = parent
+    @filetype = filetype
     @indentation_level = indentation_level
+  end
+
+  def whole_key
+    parent&.whole_key.to_s + key
+  end
+
+  def which_key_map 
+    leader&.which_key_map || prefix&.which_key_map  
   end
 
   # Set leader informations for this key stroke
