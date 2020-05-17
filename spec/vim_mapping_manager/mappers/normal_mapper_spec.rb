@@ -13,8 +13,8 @@ RSpec.describe Mappers::Normal do
 
     specify do
       expected = <<-EXPECTED
-       " Duplicate current file
-       nnoremap <silent> du :saveas <C-R>=expand('%')<CR>
+        " Duplicate current file
+        nnoremap <silent> du :saveas <C-R>=expand('%')<CR>
       EXPECTED
 
       subject.render

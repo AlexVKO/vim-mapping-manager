@@ -62,8 +62,10 @@ module VimMappingManager
   end
 
   def self.prefix(key, name:, desc:, filetype: nil, &block)
-    find_key_stroke(key).set_prefix(name: name, desc: desc)
-    find_key_stroke(key).prefix.instance_exec(&block) if block
+    key_stroke = find_key_stroke(key, filetype)
+    key_stroke.set_prefix(name: name, desc: desc)
+    key_stroke.prefix.instance_exec(&block) if block
+    key_stroke.prefix.filetype = filetype
   end
 
   def self.command(name, command, desc:)
@@ -79,7 +81,7 @@ module VimMappingManager
     @global_commands.values.each(&:render)
   end
 
-  def self.find_key_stroke(key)
-    @global_key_strokes[key] ||= KeyStroke.new(key, nil)
+  def self.find_key_stroke(key, filetype = nil)
+    @global_key_strokes[key+filetype.to_s] ||= KeyStroke.new(key, nil)
   end
 end

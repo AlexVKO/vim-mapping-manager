@@ -19,16 +19,22 @@ module Mappers
       desc.capitalize
     end
 
+    def autocmd
+      if (filetype = keystroke&.parent_prefix&.filetype)
+        "autocmd FileType #{filetype} "
+      end
+    end
+
     def render
-      OutputFile.write "\n#{indentation}\"#{desc}"
+      OutputFile.write "\n#{indentation}\" #{desc}"
 
       if prefix
-        OutputFile.write "#{indentation}#{map_keyword} <silent> #{prefix.parent_key}#{prefix.key}#{key} #{command}"
+        OutputFile.write "#{indentation}#{autocmd}#{map_keyword} <silent> #{prefix.parent_key}#{prefix.key}#{key} #{command}"
         if self.to_s.include?('Normal')
-          OutputFile.write "#{indentation}call extend(#{@prefix.which_key_map}, {'#{key}':'#{desc_presence || 'which_key_ignore'}'})"
+          OutputFile.write "#{indentation}#{autocmd}call extend(#{@prefix.which_key_map}, {'#{key}':'#{desc_presence || 'which_key_ignore'}'})"
         end
       else
-        OutputFile.write "#{indentation}#{map_keyword} <silent> #{key} #{command}"
+        OutputFile.write "#{indentation}#{autocmd}#{map_keyword} <silent> #{key} #{command}"
       end
     end
   end

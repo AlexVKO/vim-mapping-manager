@@ -1,10 +1,20 @@
 class Prefix
   include CommandHelpers
-  attr_reader :name, :desc, :key, :key_strokes, :indentation_level, :is_sub_prefix, :which_key_map, :parent_key
+  attr_reader :name,
+    :desc,
+    :key,
+    :key_strokes,
+    :indentation_level,
+    :is_sub_prefix,
+    :which_key_map,
+    :parent_key
 
-  def initialize(name, keystroke, desc: nil, which_key_map: nil)
+  attr_accessor :filetype
+
+  def initialize(name, keystroke, desc: nil, which_key_map: nil, filetype: nil)
     @name = name
     @desc = desc
+    @filetype = filetype
     @key = keystroke.key
     @key_strokes = {}
     @indentation_level = keystroke.indentation_level
@@ -18,37 +28,38 @@ class Prefix
     @which_key_map = value + "." + key.gsub(@parent_key, '')
   end
 
-  def find_or_create_keystroke(key)
-    key_strokes[key] ||= KeyStroke.new(key, self, indentation_level: indentation_level)
+  def find_or_create_keystroke(key, filetype)
+    key_strokes[key+filetype.to_s] ||= KeyStroke.new(key, self, indentation_level: indentation_level)
   end
 
   # Create a nested prefix
-  def prefix(key, name:, desc:, &block)
-    key_stroke = find_or_create_keystroke(key)
-    raise("Mapping for #{key} already exists") if key_strokes[key].prefix
+  def prefix(key, name:, desc:, filetype: nil, &block)
+    key_stroke = find_or_create_keystroke(key, filetype.to_s)
+    raise("Mapping for #{key} already exists") if key_strokes[key+filetype.to_s].prefix
 
     key_stroke.indentation_level = indentation_level + 2
     key_stroke.set_prefix(name: @name + " > " + name, desc: desc)
+    key_stroke.prefix.filetype = filetype
     key_stroke.prefix.which_key_map = which_key_map
     key_stroke.prefix.instance_exec(&block) if block
   end
 
   # Create a normal command
   def normal(key, command, desc:)
-    key_stroke = find_or_create_keystroke(key)
+    key_stroke = find_or_create_keystroke(key, filetype)
 
-    raise("Mapping for #{key} already exists") if key_strokes[key].normal
+    raise("Mapping for #{key} already exists") if key_stroke.normal
 
-    key_strokes[key].set_normal(command, desc: desc)
+    key_stroke.set_normal(command, desc: desc)
   end
 
   # Create a visual command
   def visual(key, command, desc:)
-    key_stroke = find_or_create_keystroke(key)
+    key_stroke = find_or_create_keystroke(key, filetype)
 
-    raise("Mapping for #{key} already exists") if key_strokes[key].visual
+    raise("Mapping for #{key} already exists") if key_stroke.visual
 
-    key_strokes[key].set_visual(command, desc: desc)
+    key_stroke.set_visual(command, desc: desc)
   end
 
   def name_parameterize
@@ -70,18 +81,27 @@ class Prefix
     end
   end
 
+  def render_filetype
+    if filetype
+      ["\" Filetype: #{filetype}"]
+    else
+      []
+    end
+  end
+
   def render_header
     [
       "",
       "",
       "\" ----------------------------------------------------------------",
-      "\" Prefix: #{name}",
+      "\" Prefix #{name}",
       "\" Key #{parent_key}#{key}",
+      *render_filetype,
       "\" #{desc}",
-      '" ----------------------------------------------------------------',
-      *render_which_prefix,
+        '" ----------------------------------------------------------------',
+        *render_which_prefix,
     ].map { |line| (' ' * indentation_level) + line }
-    .each { |line| OutputFile.write(line) }
+        .each { |line| OutputFile.write(line) }
   end
 
   def render

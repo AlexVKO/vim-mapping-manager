@@ -1,14 +1,15 @@
-# VimMappingManager(WIP)
+# VimMappingManager
+
+Documenentation WIP
 
 This is a plugin that takes your vim mappings to the next level, by using it you will gain:
-
 
 - [x] Simplicity, readability, and extensibility.
 - [x] Out-of-the-box integration with vim-which-key
 - [x] Run time checkers and validations. (ex: duplicated mappings)
 - [ ] Ability to create Ruby methods to be executed by VIM mappings.
 - [x] Run time helpers.(ex: current_file_path, current_line)
-- [ ] Auto-generated documentation.
+- [ ] Auto-generated markdown documentation.
 
 This:
 ```ruby
@@ -23,6 +24,10 @@ This:
     normal('c', ":saveas #{current_file_path}", desc: "Duplicate current file")
     normal('r', ':checktime',                   desc: 'Reload the file')
     normal('d', ':!rm %',                       desc: 'Delete current file')
+  end
+
+  prefix(',', name: 'Files', desc: 'Mappings related to file manipulation', filetype: :ruby) do
+    normal('c', ":CreateRSpec(#{current_file_path})", desc: "Create RSpec file")
   end
 
   prefix ';', name: 'FuzzyFinder', desc: 'Search everything' do
@@ -49,20 +54,20 @@ Generates this:
   nnoremap <space> :<c-u>WhichKey '<space>'<CR>
   vnoremap <space> :<c-u>WhichKeyVisual '<space>'<CR>
 
-  "Indent paragraph
+  " Indent paragraph
   nnoremap <silent> <space>a =ip
   call extend(g:which_key_map, {'a':'Indent paragraph'})
 
-  "indent current file
+  " indent current file
   nnoremap <silent> <space>e gg=G<C-O>
   call extend(g:which_key_map, {'e':'Indent current file'})
 
-  "Substitute inside selection
+  " Substitute inside selection
   xnoremap <silent> s :s//g<Left><Left>
 
 
   " ----------------------------------------------------------------
-  " Prefix: Files
+  " Prefix Files
   " Key ,
   " Mappings related to file manipulation
   " ----------------------------------------------------------------
@@ -71,21 +76,37 @@ Generates this:
   nnoremap , :<c-u>WhichKey ','<CR>
   vnoremap , :<c-u>WhichKeyVisual ','<CR>
 
-  "Duplicate current file
+  " Duplicate current file
   nnoremap <silent> ,c :saveas <C-R>=expand('%')<CR>
   call extend(g:which_key_map_files, {'c':'Duplicate current file'})
 
-  "Reload the file
+  " Reload the file
   nnoremap <silent> ,r :checktime
   call extend(g:which_key_map_files, {'r':'Reload the file'})
 
-  "Delete current file
+  " Delete current file
   nnoremap <silent> ,d :!rm %
   call extend(g:which_key_map_files, {'d':'Delete current file'})
 
 
   " ----------------------------------------------------------------
-  " Prefix: FuzzyFinder
+  " Prefix Files
+  " Key ,
+  " Filetype: ruby
+  " Mappings related to file manipulation
+  " ----------------------------------------------------------------
+  let g:which_key_map_files = { 'name' : '+Files' }
+  call which_key#register(',', 'g:which_key_map_files')
+  nnoremap , :<c-u>WhichKey ','<CR>
+  vnoremap , :<c-u>WhichKeyVisual ','<CR>
+
+  " Create RSpec file
+  autocmd FileType ruby nnoremap <silent> ,c :CreateRSpec(<C-R>=expand('%')<CR>)
+  autocmd FileType ruby call extend(g:which_key_map_files, {'c':'Create rspec file'})
+
+
+  " ----------------------------------------------------------------
+  " Prefix FuzzyFinder
   " Key ;
   " Search everything
   " ----------------------------------------------------------------
@@ -96,17 +117,17 @@ Generates this:
 
 
     " ----------------------------------------------------------------
-    " Prefix: FuzzyFinder > Rails
+    " Prefix FuzzyFinder > Rails
     " Key ;r
     " Search in Rails directories
     " ----------------------------------------------------------------
     let g:which_key_map_fuzzyfinder.r = { 'name' : '+FuzzyFinder > Rails' }
 
-    "Find for models
+    " Find for models
     nnoremap <silent> ;rm :Files <cr> app/models/
     call extend(g:which_key_map_fuzzyfinder.r, {'m':'Find for models'})
 
-    "Find for controllers
+    " Find for controllers
     nnoremap <silent> ;rc :Files <cr> app/controllers/
     call extend(g:which_key_map_fuzzyfinder.r, {'c':'Find for controllers'})
 
