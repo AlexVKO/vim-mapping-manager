@@ -4,14 +4,16 @@ This is a plugin that takes your vim mappings to the next level, by using it you
 
 - [x] Simplicity, readability, and extensibility.
 - [ ] Out-of-the-box integration with vim-which-key
-- [ ] Run time checkers and validations. (ex: duplicated mappings)
+- [x] Run time checkers and validations. (ex: duplicated mappings)
 - [ ] Ability to create Ruby methods to be executed by VIM mappings.
-- [ ] Run time helpers.(ex: current_file_path, current_line)
+- [x] Run time helpers.(ex: current_file_path, current_line)
 - [ ] Auto-generated documentation.
 
 This:
 ```ruby
 normal('<leader>e', 'gg=G', desc: 'indent current file')
+
+visual('s', ":s//g#{move_cursor(2, :chars, :left)}", desc: 'Substitute inside selection')
 
 prefix(',', name: 'Files', desc: 'Mappings related to file manipulation') do
   normal('du', ":saveas #{current_file_path}", desc: 'Duplicate current file', execute: false)

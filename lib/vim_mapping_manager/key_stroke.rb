@@ -1,9 +1,10 @@
 require_relative '../vim_mapping_manager/mappers/normal_mapper.rb'
+require_relative '../vim_mapping_manager/mappers/visual_mapper.rb'
 require_relative '../vim_mapping_manager/prefix.rb'
 
 class KeyStroke
   include CommandHelpers
-  attr_reader :key, :prefix, :normal, :parent_prefix
+  attr_reader :key, :prefix, :normal, :visual, :parent_prefix
 
   def initialize(key, parent_prefix = nil)
     @key = key
@@ -17,6 +18,13 @@ class KeyStroke
     @prefix = Prefix.new(name, self, desc: desc)
   end
 
+  # Defines a visual command
+  def set_visual(command, desc: nil)
+    raise("#{key} is already defined as a visual command") if @visual
+
+    @visual = Mappers::Visual.new(command, self, desc: desc)
+  end
+
   # Defines a normal command
   def set_normal(command, desc: nil)
     raise("#{key} is already defined as a normal command") if @normal
@@ -27,5 +35,6 @@ class KeyStroke
   def render
     prefix&.render
     normal&.render
+    visual&.render
   end
 end

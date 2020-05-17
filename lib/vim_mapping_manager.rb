@@ -47,9 +47,12 @@ module VimMappingManager
 
   private
 
+  def self.visual(key, command, desc:, &block)
+    find_key_stroke(key).set_visual(command, desc: desc)
+  end
+
   def self.normal(key, command, desc:, &block)
     find_key_stroke(key).set_normal(command, desc: desc)
-    # find_key_stroke(key).instance_exec(&block) if block
   end
 
   def self.prefix(key, name:, desc:, &block)

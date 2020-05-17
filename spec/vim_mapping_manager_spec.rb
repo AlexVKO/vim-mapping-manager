@@ -13,6 +13,8 @@ RSpec.describe VimMappingManager do
       described_class.call do
         normal('<leader>e', 'gg=G<C-O>', desc: 'indent current file')
 
+        visual('s', ":s//g#{move_cursor(2, :chars, :left)}", desc: 'Substitute inside selection')
+
         prefix(',', name: 'Files', desc: 'Mappings related to file manipulation') do
           normal('du', ":saveas #{current_file_path}", desc: "Duplicate current file")
           normal('ct', ':checktime',                   desc: 'Reload the file')
@@ -25,6 +27,9 @@ RSpec.describe VimMappingManager do
       expected = <<-EXPECTED
        " indent current file
        nnoremap <silent> <leader>e gg=G<C-O>
+
+       " Substitute inside selection
+       xnoremap <silent> s :s//g<Left><Left>
 
        " ----------------------------------------------------------------
        " Prefix: Files, key: ,

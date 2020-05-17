@@ -1,4 +1,4 @@
-RSpec.describe NormalCommand do
+RSpec.describe Mappers::Normal do
   before do
     OutputFile.reset!
     VimMappingManager.reset!
