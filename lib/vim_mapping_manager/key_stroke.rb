@@ -1,19 +1,29 @@
 require_relative '../vim_mapping_manager/mappers/normal_mapper.rb'
 require_relative '../vim_mapping_manager/mappers/visual_mapper.rb'
 require_relative '../vim_mapping_manager/prefix.rb'
+require_relative '../vim_mapping_manager/leader.rb'
 
 class KeyStroke
   include CommandHelpers
-  attr_reader :key, :prefix, :normal, :visual, :parent_prefix
+  attr_reader :key, :leader, :prefix, :normal, :visual, :parent_prefix
 
   def initialize(key, parent_prefix = nil)
     @key = key
     @parent_prefix = parent_prefix
   end
 
+  # Set leader informations for this key stroke
+  def set_leader
+    raise("#{key} is already defined as a prefix") if prefix
+    raise("#{key} is already defined as a leader") if leader
+
+    @leader = Leader.new(self)
+  end
+
   # Set prefix informations for this key stroke
   def set_prefix(name:, desc:)
     raise("#{key} is already defined as a prefix") if prefix
+    raise("#{key} is already defined as a leader") if leader
 
     @prefix = Prefix.new(name, self, desc: desc)
   end
@@ -33,6 +43,7 @@ class KeyStroke
   end
 
   def render
+    leader&.render
     prefix&.render
     normal&.render
     visual&.render

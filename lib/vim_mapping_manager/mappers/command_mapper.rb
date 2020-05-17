@@ -9,7 +9,7 @@ module Mappers
     end
 
     def render
-      OutputFile.write "\n\" #{desc}"
+      OutputFile.write "\" #{desc}"
       OutputFile.write "command! #{name} #{command}"
     end
   end

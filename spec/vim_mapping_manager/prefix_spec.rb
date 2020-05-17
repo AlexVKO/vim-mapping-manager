@@ -17,8 +17,6 @@ RSpec.describe Prefix do
        " Prefix: FuzzyFinder, key: ;
        " Search everything
        " ----------------------------------------------------------------
-       nnoremap  [FuzzyFinder] <Nop>
-       nmap      ; [Files]
       EXPECTED
 
       renders_properly(subject.render, expected)

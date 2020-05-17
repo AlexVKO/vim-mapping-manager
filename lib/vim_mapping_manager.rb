@@ -29,6 +29,7 @@ module VimMappingManager
   def self.reset!
     @global_key_strokes = {}
     @global_commands = {}
+    @leader_key = nil
   end
 
   def self.call(&block)
@@ -55,6 +56,11 @@ module VimMappingManager
     find_key_stroke(key).set_normal(command, desc: desc)
   end
 
+  def self.leader(key, &block)
+    find_key_stroke(key).set_leader
+    find_key_stroke(key).leader.instance_exec(&block) if block
+  end
+
   def self.prefix(key, name:, desc:, &block)
     find_key_stroke(key).set_prefix(name: name, desc: desc)
     find_key_stroke(key).prefix.instance_exec(&block) if block
@@ -65,15 +71,13 @@ module VimMappingManager
     @global_commands[name] = Mappers::Command.new(name, command, desc: desc)
   end
 
-
   def self.render_command_mappins
     return if @global_commands.values.none?
-    OutputFile.write "\n\" ----------------------------------------------------------------"
+    OutputFile.write "\n\n\" ----------------------------------------------------------------"
     OutputFile.write "\" Commands"
     OutputFile.write '" ----------------------------------------------------------------'
     @global_commands.values.each(&:render)
   end
-
 
   def self.find_key_stroke(key)
     @global_key_strokes[key] ||= KeyStroke.new(key, nil)

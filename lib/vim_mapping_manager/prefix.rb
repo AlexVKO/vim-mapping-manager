@@ -18,14 +18,27 @@ class Prefix
     key_strokes[key] = keystroke
   end
 
+  def which_key_map
+    "g:which_key_map_#{name_parameterize}"
+  end
+
+  def name_parameterize
+    name.downcase.strip.gsub(/ +/, '_')
+  end
+
   def render
     lines = [
-      "\n\" ----------------------------------------------------------------",
+      "\n\n\" ----------------------------------------------------------------",
       "\" Prefix: #{name}, key: #{key}",
       "\" #{desc}",
       '" ----------------------------------------------------------------',
-      "  nnoremap  [#{name}] <Nop>",
-      "  nmap      #{key} [Files]",
+      "let #{which_key_map} = { 'name' : '+#{name_parameterize}' }",
+      "if exists(':WhichKey')",
+      "  call which_key#register('#{key}', '#{which_key_map}')",
+      'endif',
+      '',
+      "nnoremap #{key} :<c-u>WhichKey '#{key}'<CR>",
+      "vnoremap #{key} :<c-u>WhichKeyViual '#{key}'<CR>"
     ]
 
     lines.each { |line| OutputFile.write(line) }

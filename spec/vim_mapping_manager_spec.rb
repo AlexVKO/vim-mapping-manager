@@ -11,8 +11,11 @@ RSpec.describe VimMappingManager do
   describe 'Full mapping example' do
     specify do
       described_class.call do
-        normal('<leader>e', 'gg=G<C-O>', desc: 'indent current file')
+        leader('<space>') do
+          normal('a', '=ip', desc: 'Indent paragraph')
+        end
 
+        normal('e', 'gg=G<C-O>', desc: 'indent current file')
         visual('s', ":s//g#{move_cursor(2, :chars, :left)}", desc: 'Substitute inside selection')
 
         prefix(',', name: 'Files', desc: 'Mappings related to file manipulation') do
@@ -25,42 +28,67 @@ RSpec.describe VimMappingManager do
       end
 
       expected = <<-EXPECTED
-       " indent current file
-       nnoremap <silent> <leader>e gg=G<C-O>
+        " ----------------------------------------------------------------
+        " Leader, key: <space>
+        " ----------------------------------------------------------------
+        let mapleader='<space>'
 
-       " Substitute inside selection
-       xnoremap <silent> s :s//g<Left><Left>
+        if !exists('g:which_key_map')
+          let g:which_key_map = {}
+        endif
+        if exists(':WhichKey')
+          call which_key#register('<space>', 'g:which_key_map')
+        endif
 
-       " ----------------------------------------------------------------
-       " Prefix: Files, key: ,
-       " Mappings related to file manipulation
-       " ----------------------------------------------------------------
-       nnoremap  [Files] <Nop>
-       nmap      , [Files]
+        " Indent paragraph
+        nnoremap <silent> <space>a =ip
+        let g:which_key_map.a = 'Indent paragraph'
 
-       " Duplicate current file
-       nnoremap <silent> [Files]du :saveas <C-R>=expand('%')<CR>
+        " indent current file
+        nnoremap <silent> e gg=G<C-O>
 
-       " Reload the file
-       nnoremap <silent> [Files]ct :checktime
+        " Substitute inside selection
+        xnoremap <silent> s :s//g<Left><Left>
 
-       " Delete current file
-       nnoremap <silent> [Files]de :!rm %
 
-       " ----------------------------------------------------------------
-       " Commands
-       " ----------------------------------------------------------------
+        " ----------------------------------------------------------------
+        " Prefix: Files, key: ,
+        " Mappings related to file manipulation
+        " ----------------------------------------------------------------
+        let g:which_key_map_files = { 'name' : '+files' }
+        if exists(':WhichKey')
+          call which_key#register(',', 'g:which_key_map_files')
+        endif
 
-       " Reload VIM
-       command! Reload :so ~/.config/nvim/init.vim
+        nnoremap , :<c-u>WhichKey ','<CR>
+        vnoremap , :<c-u>WhichKeyViual ','<CR>
+
+        " Duplicate current file
+        nnoremap <silent> ,du :saveas <C-R>=expand('%')<CR>
+        let g:which_key_map_files.du = 'Duplicate current file'
+
+        " Reload the file
+        nnoremap <silent> ,ct :checktime
+        let g:which_key_map_files.ct = 'Reload the file'
+
+        " Delete current file
+        nnoremap <silent> ,de :!rm %
+        let g:which_key_map_files.de = 'Delete current file'
+
+
+        " ----------------------------------------------------------------
+        " Commands
+        " ----------------------------------------------------------------
+        " Reload VIM
+        command! Reload :so ~/.config/nvim/init.vim
       EXPECTED
 
       renders_properly(described_class.render, expected)
     end
 
     def renders_properly(actual, expected)
-      actual = actual.gsub(/^ */, '')
-      expected = expected.gsub(/^ */, '')
+      actual = actual#.gsub(/^*/, '')
+      expected = expected.gsub(/        /, '')
       expect(actual).to include(expected)
     end
   end
