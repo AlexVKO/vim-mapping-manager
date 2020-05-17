@@ -7,6 +7,7 @@ class Leader < Prefix
   def initialize(keystroke)
     @key = keystroke.key
     @key_strokes = {}
+    @indentation_level = keystroke.indentation_level
   end
 
   def which_key_map
@@ -20,17 +21,17 @@ class Leader < Prefix
   def render_header
     [
       "\n\" ----------------------------------------------------------------",
-      "\" Leader, key: #{key}",
+      "\" Leader",
       '" ----------------------------------------------------------------',
       "let mapleader='#{key}'",
       "",
       "if !exists('#{which_key_map}')",
       "  let #{which_key_map} = {}",
       "endif",
-      "if exists(':WhichKey')",
-      "  call which_key#register('#{key}', '#{which_key_map}')",
-      'endif'
+      "call which_key#register('#{key}', '#{which_key_map}')",
+      "nnoremap #{key} :<c-u>WhichKey '#{key}'<CR>",
+      "vnoremap #{key} :<c-u>WhichKeyViual '#{key}'<CR>"
     ].map { |line| (' ' * indentation_level) + line }
-    .each { |line| OutputFile.write(line) }
+      .each { |line| OutputFile.write(line) }
   end
 end
