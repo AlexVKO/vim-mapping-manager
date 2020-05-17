@@ -90,6 +90,18 @@ prefix('R', name: 'Ruby', desc: 'Mappings only for Ruby', filetype: :ruby) do
 end
 ```
 
+### Nested Prefixes
+```ruby
+prefix ';', name: 'Fuzzy Finder', desc: 'Fuzzy anything' do
+  prefix 'r', name: 'Rails', desc: 'Search in Rails directories', filetype: :ruby do
+    normal 'mo', ':Files <cr> app/models/', desc: 'Find for models'
+    normal 'co', ':Files <cr> app/controllers/', desc: 'Find for controllers'
+  end
+end
+```
+
+now `;rco` will find models inside your rails project
+
 ### Helpers
 There are several helpers that you can use in this file.
 ```

@@ -61,7 +61,7 @@ module VimMappingManager
     find_key_stroke(key).leader.instance_exec(&block) if block
   end
 
-  def self.prefix(key, name:, desc:, &block)
+  def self.prefix(key, name:, desc:, filetype: nil, &block)
     find_key_stroke(key).set_prefix(name: name, desc: desc)
     find_key_stroke(key).prefix.instance_exec(&block) if block
   end

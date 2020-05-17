@@ -17,8 +17,8 @@ class Leader < Prefix
     'leader'
   end
 
-  def render
-    lines = [
+  def render_header
+    [
       "\n\" ----------------------------------------------------------------",
       "\" Leader, key: #{key}",
       '" ----------------------------------------------------------------',
@@ -30,12 +30,7 @@ class Leader < Prefix
       "if exists(':WhichKey')",
       "  call which_key#register('#{key}', '#{which_key_map}')",
       'endif'
-    ]
-
-    lines.each { |line| OutputFile.write(line) }
-
-    key_strokes.values.each(&:render)
-
-    lines.join("\n")
+    ].map { |line| (' ' * indentation_level) + line }
+    .each { |line| OutputFile.write(line) }
   end
 end

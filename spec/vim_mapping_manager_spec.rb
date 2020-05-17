@@ -13,6 +13,7 @@ RSpec.describe VimMappingManager do
       described_class.call do
         leader('<space>') do
           normal('a', '=ip', desc: 'Indent paragraph')
+          visual('s', ":s//g#{move_cursor(2, :chars, :left)}", desc: 'Substitute inside selection')
         end
 
         normal('e', 'gg=G<C-O>', desc: 'indent current file')
@@ -40,9 +41,17 @@ RSpec.describe VimMappingManager do
           call which_key#register('<space>', 'g:which_key_map')
         endif
 
+        -- Normal Mappings
+
         " Indent paragraph
         nnoremap <silent> <space>a =ip
         let g:which_key_map.a = 'Indent paragraph'
+
+        -- Visual Mappins
+
+        " Substitute inside selection
+        nnoremap <silent> <space>s :s//g<Left><Left>
+        let g:which_key_map.s = 'Substitute inside selection'
 
         " indent current file
         nnoremap <silent> e gg=G<C-O>
@@ -62,6 +71,8 @@ RSpec.describe VimMappingManager do
 
         nnoremap , :<c-u>WhichKey ','<CR>
         vnoremap , :<c-u>WhichKeyViual ','<CR>
+
+        -- Normal Mappings
 
         " Duplicate current file
         nnoremap <silent> ,du :saveas <C-R>=expand('%')<CR>

@@ -8,22 +8,29 @@ RSpec.describe Prefix do
     let(:key_stroke) { KeyStroke.new(';') }
 
     subject do
-      described_class.new('FuzzyFinder', key_stroke, desc: 'Search everything')
+      a = described_class.new('FuzzyFinder', key_stroke, desc: 'Search everything')
+
+      a.instance_exec do
+        prefix 'r', name: 'Rails', desc: 'Search in Rails directories' do
+          normal 'mo', ':Files <cr> app/models/', desc: 'Find for models'
+          normal 'co', ':Files <cr> app/controllers/', desc: 'Find for controllers'
+        end
+      end
+
+      a
     end
 
     specify do
       expected = <<-EXPECTED
-       " ----------------------------------------------------------------
-       " Prefix: FuzzyFinder, key: ;
-       " Search everything
-       " ----------------------------------------------------------------
+        asdf
       EXPECTED
 
-      renders_properly(subject.render, expected)
+      subject.render
+      renders_properly(OutputFile.output, expected)
     end
 
     def renders_properly(actual, expected)
-      actual = actual.gsub(/^ */, '').chomp
+      actual = actual
       expected = expected.gsub(/^ */, '').chomp
       expect(actual).to include(expected)
     end

@@ -1,21 +1,44 @@
 class Prefix
   include CommandHelpers
-  attr_reader :name, :desc, :key, :key_strokes
+  attr_reader :name, :desc, :key, :key_strokes, :indentation_level
 
   def initialize(name, keystroke, desc: nil)
     @name = name
     @desc = desc
     @key = keystroke.key
     @key_strokes = {}
+    @indentation_level = keystroke.indentation_level
   end
 
+  # Create a nested prefix
+  def prefix(key, name:, desc:, &block)
+    key = @key + key
+
+    key_strokes[key] ||= KeyStroke.new(key, self)
+
+    raise("Mapping for #{key} already exists") if key_strokes[key].prefix
+
+    key_strokes[key].indentation_level = indentation_level + 2
+    key_strokes[key].set_prefix(name: @name + " > " + name, desc: desc)
+    key_strokes[key].prefix.instance_exec(&block) if block
+  end
+
+  # Create a normal command
   def normal(key, command, desc:)
-    raise("Mapping for #{key} already exists") if key_strokes[key] 
+    key_strokes[key] ||= KeyStroke.new(key, self, indentation_level: indentation_level)
 
-    keystroke = KeyStroke.new(key, self)
-    keystroke.set_normal(command, desc: desc)
+    raise("Mapping for #{key} already exists") if key_strokes[key].normal
 
-    key_strokes[key] = keystroke
+    key_strokes[key].set_normal(command, desc: desc)
+  end
+
+  # Create a visual command
+  def visual(key, command, desc:)
+    key_strokes[key] ||= KeyStroke.new(key, self)
+
+    raise("Mapping for #{key} already exists") if key_strokes[key].visual
+
+    key_strokes[key].set_visual(command, desc: desc)
   end
 
   def which_key_map
@@ -23,13 +46,16 @@ class Prefix
   end
 
   def name_parameterize
-    name.downcase.strip.gsub(/ +/, '_')
+    name.downcase.strip.gsub(/ +/, '_').gsub(/[^_A-Za-z]/, '')
   end
 
-  def render
-    lines = [
-      "\n\n\" ----------------------------------------------------------------",
-      "\" Prefix: #{name}, key: #{key}",
+  def render_header
+    [
+      "",
+      "",
+      "\" ----------------------------------------------------------------",
+      "\" Prefix: #{name}",
+      "\" Key #{key}",
       "\" #{desc}",
       '" ----------------------------------------------------------------',
       "let #{which_key_map} = { 'name' : '+#{name_parameterize}' }",
@@ -39,11 +65,13 @@ class Prefix
       '',
       "nnoremap #{key} :<c-u>WhichKey '#{key}'<CR>",
       "vnoremap #{key} :<c-u>WhichKeyViual '#{key}'<CR>"
-    ]
+    ].map { |line| (' ' * indentation_level) + line }
+    .each { |line| OutputFile.write(line) }
+  end
 
-    lines.each { |line| OutputFile.write(line) }
+  def render
+    render_header
+
     key_strokes.values.each(&:render)
-
-    lines.join("\n")
   end
 end
