@@ -28,7 +28,7 @@ class Prefix
   # # ex: g:which_key_map_prefixname
   def which_key_map
     parent = keystroke.parent
-    from_parent = parent&.prefix&.which_key_map
+    from_parent = parent&.prefix&.which_key_map || parent&.leader&.which_key_map
 
     a = if from_parent
       @is_sub_prefix = true

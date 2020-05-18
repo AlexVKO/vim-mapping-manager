@@ -5,7 +5,7 @@ require_relative '../vim_mapping_manager/leader.rb'
 
 class KeyStroke
   include CommandHelpers
-  attr_reader :key, :parent, :filetype,
+  attr_reader :parent, :filetype,
     :leader, :prefix, :normal, :visual
 
   attr_accessor :indentation_level
@@ -15,6 +15,10 @@ class KeyStroke
     @parent = parent
     @filetype = filetype
     @indentation_level = indentation_level
+  end
+
+  def key
+    leader&.key || @key
   end
 
   def whole_key
