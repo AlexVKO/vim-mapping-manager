@@ -30,7 +30,7 @@ module Mappers
     def render_mapping
       mapping = "#{indentation}#{autocmd}#{map_keyword} #{parent&.whole_key}#{key} #{command}"
 
-      if command.start_with?(':')
+      if command.start_with?(':') && execute
         mapping + "<CR>"
       else
         mapping

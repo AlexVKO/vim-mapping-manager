@@ -80,7 +80,7 @@ RSpec.describe VimMappingManager do
 
         expected = <<-EXPECTED
         " DO X
-        nnoremap X :RUN<CR>
+        nnoremap X :RUN
         EXPECTED
 
         renders_properly(expected)
@@ -227,7 +227,7 @@ RSpec.describe VimMappingManager do
 
         expected = <<-EXPECTED
         " DO X
-        inoremap X :RUN<CR>
+        inoremap X :RUN
         EXPECTED
 
         renders_properly(expected)
@@ -337,7 +337,7 @@ RSpec.describe VimMappingManager do
 
         expected = <<-EXPECTED
           " DO X
-          nnoremap pX :RUN<CR>
+          nnoremap pX :RUN
           call extend(g:which_key_map_sampleprefix, {'X':'DO X'})
         EXPECTED
 
