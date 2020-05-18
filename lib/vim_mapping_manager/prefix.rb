@@ -7,7 +7,7 @@ class Prefix
     :is_sub_prefix 
 
   def initialize(name, keystroke, desc: nil)
-    @name = name
+    @name = name.to_s
     @keystroke = keystroke
     @desc = desc
     @key_strokes = {}
@@ -19,6 +19,7 @@ class Prefix
   end
 
   def filetype
+    keystroke.filetype
   end
 
   def key
@@ -30,17 +31,16 @@ class Prefix
     parent = keystroke.parent
     from_parent = parent&.prefix&.which_key_map || parent&.leader&.which_key_map
 
-    a = if from_parent
+    if from_parent
       @is_sub_prefix = true
-      from_parent + "['#{key}']"
+      if key != ''
+        from_parent + "['#{key}']"
+      else
+        from_parent 
+      end
     else
       "g:which_key_map_#{name_parameterize}"
     end
-
-    # OutputFile.write "[#{key}] is_sub_prefix: #{!!is_sub_prefix}"
-    # OutputFile.write "[#{key}] which_key_map #{a}"
-
-    a
   end
 
   def find_or_create_keystroke(key, filetype:)
@@ -53,7 +53,7 @@ class Prefix
   end
 
   # Create a nested prefix
-  def prefix(key, name:, desc:, filetype: nil, &block)
+  def prefix(key = '', name:, desc:, filetype: nil, &block)
     key_stroke = find_or_create_keystroke(key, filetype: filetype)
     raise("Mapping for #{key} already exists") if key_stroke.prefix
 
@@ -84,6 +84,8 @@ class Prefix
   end
 
   def render_which_prefix
+    return [] if key == ''
+
     if which_key_map && is_sub_prefix
       [
         "let #{which_key_map} = { 'name' : '+#{name}' }"
@@ -111,7 +113,7 @@ class Prefix
       "",
       "",
       "\" ----------------------------------------------------------------",
-      "\" Prefix #{name}",
+      "\" #{key == '' ? 'Namespace' : 'Prefix'} #{name}",
       "\" Key #{parent_key}#{keystroke.key}",
       *render_filetype,
       "\" #{desc}",
