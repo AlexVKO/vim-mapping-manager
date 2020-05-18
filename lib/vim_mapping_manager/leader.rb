@@ -33,7 +33,7 @@ class Leader < Prefix
       "if !exists('#{which_key_map}')",
       "  let #{which_key_map} = {}",
       "endif",
-      "call which_key#register('#{key}', '#{which_key_map}')",
+      "call which_key#register('#{actual_key}', '#{which_key_map}')",
       "nnoremap #{key} :<c-u>WhichKey '#{key}'<CR>",
       "vnoremap #{key} :<c-u>WhichKeyVisual '#{key}'<CR>"
     ].map { |line| (' ' * keystroke.indentation_level) + line }
