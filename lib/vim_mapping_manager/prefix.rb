@@ -67,11 +67,11 @@ class Prefix
   end
 
   # Create a normal command
-  def normal(key, command, desc:, filetype: nil, execute: true, recursively: false)
+  def normal(key, command = nil, desc:, filetype: nil, execute: true, recursively: false, &block)
     key_stroke = find_or_create_keystroke(key, filetype: filetype || keystroke.filetype)
     raise("Mapping for #{key} already exists") if key_stroke.normal
 
-    key_stroke.set_normal(command, desc: desc, execute: execute, recursively: recursively)
+    key_stroke.set_normal(command || block, desc: desc, execute: execute, recursively: recursively)
   end
 
   # Create a visual command

@@ -47,6 +47,32 @@ RSpec.describe VimMappingManager do
         renders_properly(expected)
       end
 
+      it 'renders Ruby mappings' do
+        config_file do
+          normal 'X', desc: 'DO X' do
+            puts 'Global'
+          end
+
+          normal 'X', desc: 'DO X', filetype: :ruby do
+            puts 'For ruby'
+          end
+        end
+
+        expected = <<-EXPECTED
+          " DO X
+          nnoremap X :call ExecuteRubyMapping('X', 'all')<CR>
+
+          " DO X
+          autocmd FileType ruby nnoremap X :call ExecuteRubyMapping('X', 'ruby')<CR>
+        EXPECTED
+
+        expect(ExecuteRubyMapping.fetch('X', 'ruby')).to respond_to :call
+        expect(ExecuteRubyMapping.fetch('X', 'all')).to respond_to :call
+        expect(ExecuteRubyMapping.commands.count).to be 2
+
+        renders_properly(expected)
+      end
+
       it 'renders simple normal commands(without executing)' do
         config_file do
           normal 'X', ':RUN', desc: 'DO X', execute: false
@@ -164,6 +190,34 @@ RSpec.describe VimMappingManager do
           nnoremap pX :RUN<CR>
           call extend(g:which_key_map_sampleprefix, {'X':'DO X'})
         EXPECTED
+
+        renders_properly(expected)
+      end
+
+      it 'renders Ruby mappings' do
+        config_file do
+          prefix('p', name: 'SamplePrefix', desc: 'Does stuff') do
+            normal 'X', desc: 'DO X' do
+              puts 'Global'
+            end
+
+            normal 'X', desc: 'DO X', filetype: :ruby do
+              puts 'For ruby'
+            end
+          end
+        end
+
+        expected = <<-EXPECTED
+          " DO X
+          nnoremap pX :call ExecuteRubyMapping('pX', 'all')<CR>
+
+          " DO X
+          autocmd FileType ruby nnoremap pX :call ExecuteRubyMapping('pX', 'ruby')<CR>
+        EXPECTED
+
+        expect(ExecuteRubyMapping.fetch('pX', 'ruby')).to respond_to :call
+        expect(ExecuteRubyMapping.fetch('pX', 'all')).to respond_to :call
+        expect(ExecuteRubyMapping.commands.count).to be 2
 
         renders_properly(expected)
       end
@@ -487,7 +541,6 @@ RSpec.describe VimMappingManager do
 
     actual = actual.gsub(/^ +/, '')
     expected = expected.gsub(/^ +/, '')
-
 
     expect(actual.lines).to include(*expected.lines)
   end

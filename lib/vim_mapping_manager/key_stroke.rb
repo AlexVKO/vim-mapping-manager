@@ -3,6 +3,32 @@ require_relative '../vim_mapping_manager/mappers/visual_mapper.rb'
 require_relative '../vim_mapping_manager/prefix.rb'
 require_relative '../vim_mapping_manager/leader.rb'
 
+class ExecuteRubyMapping
+  FUNCTION_NAME = 'ExecuteRubyMapping'
+
+  @commands = {}
+
+  def self.reset!
+    @commands = {}
+  end
+
+  def self.commands
+    @commands
+  end
+
+  def self.set(key, filetype, proc)
+    name = [key, filetype].compact.join('_').to_s
+    @commands[name] = proc
+    ":call #{FUNCTION_NAME}('#{key}', '#{filetype || 'all'}')"
+  end
+
+  def self.fetch(key, filetype = nil)
+    filetype = nil if filetype == 'all'
+    name = [key, filetype].compact.join('_').to_s
+    @commands[name]
+  end
+end
+
 class KeyStroke
   include CommandHelpers
   attr_reader :parent, :filetype,
@@ -49,12 +75,20 @@ class KeyStroke
   def set_visual(command, desc: nil, recursively:)
     raise("#{key} is already defined as a visual command") if @visual
 
+    if command.respond_to? :call
+      command = ExecuteRubyMapping.set(key, filetype, command)
+    end
+
     @visual = Mappers::Visual.new(command, self, desc: desc, recursively: recursively)
   end
 
   # Defines a normal command
   def set_normal(command, desc: nil, execute:, recursively:)
     raise("#{key} is already defined as a normal command") if @normal
+
+    if command.respond_to? :call
+      command = ExecuteRubyMapping.set(whole_key, filetype, command)
+    end
 
     @normal = Mappers::Normal.new(command, self, desc: desc, execute: execute, recursively: recursively)
   end

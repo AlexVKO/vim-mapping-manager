@@ -5,6 +5,7 @@ require_relative './vim_mapping_manager/output_file.rb'
 require_relative './vim_mapping_manager/key_stroke.rb'
 require_relative './vim_mapping_manager/mappers/command_mapper.rb'
 
+
 module VimMappingManager
   extend CommandHelpers
   class Error < StandardError; end
@@ -30,6 +31,7 @@ module VimMappingManager
     @global_key_strokes = {}
     @global_commands = {}
     @leader_key = nil
+    ExecuteRubyMapping.reset!
   end
 
   def self.call(&block)
@@ -49,11 +51,11 @@ module VimMappingManager
   private
 
   def self.visual(key, command, desc:, filetype: nil, recursively: false, &block)
-    find_key_stroke(key, filetype: filetype).set_visual(command, desc: desc, recursively: recursively)
+    find_key_stroke(key, filetype: filetype).set_visual(command || block, desc: desc, recursively: recursively)
   end
 
-  def self.normal(key, command, desc:, filetype: nil, execute: true, recursively: false, &block)
-    find_key_stroke(key, filetype: filetype).set_normal(command, desc: desc, execute: execute, recursively: recursively)
+  def self.normal(key, command = nil, desc:, filetype: nil, execute: true, recursively: false, &block)
+    find_key_stroke(key, filetype: filetype).set_normal(command || block, desc: desc, execute: execute, recursively: recursively)
   end
 
   def self.leader(key, &block)
