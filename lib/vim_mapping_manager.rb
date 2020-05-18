@@ -52,8 +52,8 @@ module VimMappingManager
     find_key_stroke(key, filetype: filetype).set_visual(command, desc: desc)
   end
 
-  def self.normal(key, command, desc:, filetype: nil, &block)
-    find_key_stroke(key, filetype: filetype).set_normal(command, desc: desc)
+  def self.normal(key, command, desc:, filetype: nil, execute: true, &block)
+    find_key_stroke(key, filetype: filetype).set_normal(command, desc: desc, execute: execute)
   end
 
   def self.leader(key, &block)

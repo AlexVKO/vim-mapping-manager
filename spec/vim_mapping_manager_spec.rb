@@ -32,7 +32,7 @@ RSpec.describe VimMappingManager do
     end
   end
 
-  context 'withuot Prefix' do
+  context 'without Prefix' do
     context 'Normal commands' do
       it 'renders simple normal commands' do
         config_file do
@@ -42,6 +42,19 @@ RSpec.describe VimMappingManager do
         expected = <<-EXPECTED
         " DO X
         nnoremap X :RUN<CR>
+        EXPECTED
+
+        renders_properly(expected)
+      end
+
+      it 'renders simple normal commands(without executing)' do
+        config_file do
+          normal 'X', ':RUN', desc: 'DO X', execute: false
+        end
+
+        expected = <<-EXPECTED
+        " DO X
+        nnoremap X :RUN
         EXPECTED
 
         renders_properly(expected)
@@ -102,6 +115,22 @@ RSpec.describe VimMappingManager do
         expected = <<-EXPECTED
           " DO X
           nnoremap pX :RUN<CR>
+          call extend(g:which_key_map_sampleprefix, {'X':'Do x'})
+        EXPECTED
+
+        renders_properly(expected)
+      end
+
+      it 'renders simple normal commands(without executing)' do
+        config_file do
+          prefix('p', name: 'SamplePrefix', desc: 'Does stuff') do
+            normal 'X', ':RUN', desc: 'DO X', execute: false
+          end
+        end
+
+        expected = <<-EXPECTED
+          " DO X
+          nnoremap pX :RUN
           call extend(g:which_key_map_sampleprefix, {'X':'Do x'})
         EXPECTED
 

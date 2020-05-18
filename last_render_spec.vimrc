@@ -1,23 +1,15 @@
 
-
 " ----------------------------------------------------------------
-" Prefix SampleNestedPrefix
-" Key a
-" Does more stuff
+" Leader
 " ----------------------------------------------------------------
-let g:which_key_map_samplenestedprefix = { 'name' : '+SampleNestedPrefix' }
-call which_key#register('a', 'g:which_key_map_samplenestedprefix')
-nnoremap a :<c-u>WhichKey 'a'<CR>
-vnoremap a :<c-u>WhichKeyVisual 'a'<CR>
+let mapleader='<space>'
 
+if !exists('g:which_key_map')
+  let g:which_key_map = {}
+endif
+call which_key#register('<space>', 'g:which_key_map')
+nnoremap <leader> :<c-u>WhichKey '<leader>'<CR>
+vnoremap <leader> :<c-u>WhichKeyVisual '<leader>'<CR>
 
-  " ----------------------------------------------------------------
-  " Namespace SampleNestedPrefix > NameSpaceX
-  " Key a
-  " Filetype: ruby
-  " Just a namespace
-  " ----------------------------------------------------------------
-
-  " DO C
-  autocmd FileType ruby nnoremap aC :RUN<CR>
-  autocmd FileType ruby call extend(g:which_key_map_samplenestedprefix, {'C':'Do c'})
+" DO X
+autocmd FileType ruby xnoremap <leader>X :RUN

@@ -7,7 +7,11 @@ module Mappers
     end
 
     def render_mapping
-      super + "<CR>"
+      if command.start_with?(':') && execute
+        super + "<CR>"
+      else
+        super
+      end
     end
   end
 end

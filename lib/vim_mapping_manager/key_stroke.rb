@@ -53,10 +53,10 @@ class KeyStroke
   end
 
   # Defines a normal command
-  def set_normal(command, desc: nil)
+  def set_normal(command, desc: nil, execute:)
     raise("#{key} is already defined as a normal command") if @normal
 
-    @normal = Mappers::Normal.new(command, self, desc: desc)
+    @normal = Mappers::Normal.new(command, self, desc: desc, execute: execute)
   end
 
   def render
