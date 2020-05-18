@@ -14,7 +14,7 @@ module Mappers
     end
 
     def render
-      OutputFile.write "\" #{desc}"
+      OutputFile.write "\n\" #{desc}"
       OutputFile.write "#{autocmd}command! #{name} #{command}"
     end
   end

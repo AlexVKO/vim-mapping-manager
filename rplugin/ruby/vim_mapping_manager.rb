@@ -12,8 +12,8 @@ Neovim.plugin do |plug|
 
   plug.command(:EditMappings) do |nvim|
     VimMappingManager.reset!
-    nvim.command('tabnew $HOME/.config/nvim/managed_mappings.rb')
-    nvim.command('vs $HOME/.config/nvim/managed_mappings.vimrc')
+    nvim.command('tabnew $HOME/.config/nvim/managed_mappings.vimrc')
+    nvim.command('vs $HOME/.config/nvim/managed_mappings.rb')
 
     example = <<-EXAMPLE
       # Example
