@@ -153,6 +153,19 @@ RSpec.describe VimMappingManager do
         renders_properly(expected)
       end
 
+      it 'renders simple normal commands(without executing)' do
+        config_file do
+          normal 'X', ':RUN', desc: 'DO X', execute: false
+        end
+
+        expected = <<-EXPECTED
+        " DO X
+        nnoremap X :RUN
+        EXPECTED
+
+        renders_properly(expected)
+      end
+
       it 'renders simple visual commands(recursively)' do
         config_file do
           visual 'X', ':RUN', desc: 'DO X', recursively: true
@@ -436,6 +449,22 @@ RSpec.describe VimMappingManager do
 
         renders_properly(expected)
       end
+
+      it 'renders simple visual commands(without g)' do
+        config_file do
+          prefix('p', name: 'SamplePrefix', desc: 'Does stuff') do
+            visual 'X', ':RUN', desc: 'DO X', execute: false
+          end
+        end
+
+        expected = <<-EXPECTED
+          " DO X
+          xnoremap pX :RUN
+        EXPECTED
+
+        renders_properly(expected)
+      end
+
 
       it 'renders simple visual commands(recursively)' do
         config_file do

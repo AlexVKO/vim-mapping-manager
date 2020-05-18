@@ -47,14 +47,14 @@ class KeyStroke
   end
 
   # Defines a visual command
-  def set_visual(command, desc: nil, recursively:)
+  def set_visual(command, desc: nil, execute:, recursively:)
     raise("#{key} is already defined as a visual command") if @visual
 
     if command.respond_to? :call
       command = ExecuteRubyMapping.set(whole_key, filetype, command)
     end
 
-    @visual = Mappers::Visual.new(command, self, desc: desc, recursively: recursively)
+    @visual = Mappers::Visual.new(command, self, desc: desc, execute: execute, recursively: recursively)
   end
 
   # Defines a normal command
