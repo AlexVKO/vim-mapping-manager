@@ -60,6 +60,19 @@ RSpec.describe VimMappingManager do
         renders_properly(expected)
       end
 
+      it 'renders simple normal commands(recursively)' do
+        config_file do
+          normal 'X', ':RUN', desc: 'DO X', recursively: true
+        end
+
+        expected = <<-EXPECTED
+        " DO X
+        nmap X :RUN<CR>
+        EXPECTED
+
+        renders_properly(expected)
+      end
+
       it 'renders normal commands with filetype' do
         config_file do
           normal 'X', ':RUN', desc: 'DO X', filetype: :ruby
@@ -83,6 +96,19 @@ RSpec.describe VimMappingManager do
         expected = <<-EXPECTED
         " DO X
         xnoremap X :RUN
+        EXPECTED
+
+        renders_properly(expected)
+      end
+
+      it 'renders simple visual commands(recursively)' do
+        config_file do
+          visual 'X', ':RUN', desc: 'DO X', recursively: true
+        end
+
+        expected = <<-EXPECTED
+        " DO X
+        xmap X :RUN
         EXPECTED
 
         renders_properly(expected)
@@ -137,6 +163,21 @@ RSpec.describe VimMappingManager do
         renders_properly(expected)
       end
 
+      it 'renders simple normal commands(recursively)' do
+        config_file do
+          prefix('p', name: 'SamplePrefix', desc: 'Does stuff') do
+            normal 'X', ':RUN', desc: 'DO X', recursively: true
+          end
+        end
+
+        expected = <<-EXPECTED
+        " DO X
+        nmap pX :RUN<CR>
+        EXPECTED
+
+        renders_properly(expected)
+      end
+
       it 'renders normal commands with filetype on the command level' do
         config_file do
           prefix('p', name: 'SamplePrefix', desc: 'Does stuff') do
@@ -186,6 +227,21 @@ RSpec.describe VimMappingManager do
         renders_properly(expected)
       end
 
+      it 'renders simple visual commands(recursively)' do
+        config_file do
+          prefix('p', name: 'SamplePrefix', desc: 'Does stuff') do
+            visual 'X', ':RUN', desc: 'DO X', recursively: true
+          end
+        end
+
+        expected = <<-EXPECTED
+        " DO X
+        xmap pX :RUN
+        EXPECTED
+
+        renders_properly(expected)
+      end
+
       it 'renders visual commands with filetype on the command level' do
         config_file do
           prefix('p', name: 'SamplePrefix', desc: 'Does stuff') do
@@ -216,7 +272,6 @@ RSpec.describe VimMappingManager do
         renders_properly(expected)
       end
     end
-
 
     it 'renders the header properly' do
       config_file do

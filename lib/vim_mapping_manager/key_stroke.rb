@@ -46,17 +46,17 @@ class KeyStroke
   end
 
   # Defines a visual command
-  def set_visual(command, desc: nil)
+  def set_visual(command, desc: nil, recursively:)
     raise("#{key} is already defined as a visual command") if @visual
 
-    @visual = Mappers::Visual.new(command, self, desc: desc)
+    @visual = Mappers::Visual.new(command, self, desc: desc, recursively: recursively)
   end
 
   # Defines a normal command
-  def set_normal(command, desc: nil, execute:)
+  def set_normal(command, desc: nil, execute:, recursively:)
     raise("#{key} is already defined as a normal command") if @normal
 
-    @normal = Mappers::Normal.new(command, self, desc: desc, execute: execute)
+    @normal = Mappers::Normal.new(command, self, desc: desc, execute: execute, recursively: recursively)
   end
 
   def render

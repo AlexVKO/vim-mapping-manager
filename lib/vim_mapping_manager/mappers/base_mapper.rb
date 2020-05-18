@@ -4,10 +4,11 @@ module Mappers
   class Base
     extend Forwardable
 
-    attr_reader :command, :desc, :keystroke, :execute
+    attr_reader :command, :desc, :keystroke, :execute, :recursively
 
-    def initialize(command, keystroke, desc: nil, execute: true)
+    def initialize(command, keystroke, desc: nil, execute: true, recursively:)
       @command = command
+      @recursively = recursively
       @keystroke = keystroke
       @desc = desc
       @execute = execute

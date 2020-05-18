@@ -63,20 +63,20 @@ class Prefix
   end
 
   # Create a normal command
-  def normal(key, command, desc:, filetype: nil, execute: true)
+  def normal(key, command, desc:, filetype: nil, execute: true, recursively: false)
     key_stroke = find_or_create_keystroke(key, filetype: filetype || keystroke.filetype)
     raise("Mapping for #{key} already exists") if key_stroke.normal
 
-    key_stroke.set_normal(command, desc: desc, execute: execute)
+    key_stroke.set_normal(command, desc: desc, execute: execute, recursively: recursively)
   end
 
   # Create a visual command
-  def visual(key, command, desc:, filetype: nil)
+  def visual(key, command, desc:, filetype: nil, recursively: false)
     key_stroke = find_or_create_keystroke(key, filetype: filetype || keystroke.filetype)
 
     raise("Mapping for #{key} already exists") if key_stroke.visual
 
-    key_stroke.set_visual(command, desc: desc)
+    key_stroke.set_visual(command, desc: desc, recursively: recursively)
   end
 
   def name_parameterize

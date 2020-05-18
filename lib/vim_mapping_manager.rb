@@ -48,12 +48,12 @@ module VimMappingManager
 
   private
 
-  def self.visual(key, command, desc:, filetype: nil, &block)
-    find_key_stroke(key, filetype: filetype).set_visual(command, desc: desc)
+  def self.visual(key, command, desc:, filetype: nil, recursively: false, &block)
+    find_key_stroke(key, filetype: filetype).set_visual(command, desc: desc, recursively: recursively)
   end
 
-  def self.normal(key, command, desc:, filetype: nil, execute: true, &block)
-    find_key_stroke(key, filetype: filetype).set_normal(command, desc: desc, execute: execute)
+  def self.normal(key, command, desc:, filetype: nil, execute: true, recursively: false, &block)
+    find_key_stroke(key, filetype: filetype).set_normal(command, desc: desc, execute: execute, recursively: recursively)
   end
 
   def self.leader(key, &block)
