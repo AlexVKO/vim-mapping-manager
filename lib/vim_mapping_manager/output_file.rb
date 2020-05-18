@@ -4,6 +4,7 @@ class OutputFile
   @tempfile = ::Tempfile.new()
 
   def self.write(content)
+    return unless content
     content = "" if content.strip.empty?
     @tempfile << content + "\n"
   end

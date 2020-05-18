@@ -30,7 +30,9 @@ module Mappers
     end
 
     def render_which_key
-      "#{indentation}#{autocmd}call extend(#{parent&.which_key_map}, {'#{key}':'#{desc_presence || 'which_key_ignore'}'})"
+      if parent&.which_key_map
+        "#{indentation}#{autocmd}call extend(#{parent.which_key_map}, {'#{key}':'#{desc_presence || 'which_key_ignore'}'})"
+      end
     end
 
     def autocmd
