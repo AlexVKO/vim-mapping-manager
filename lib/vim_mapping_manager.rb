@@ -4,7 +4,7 @@ require_relative './vim_mapping_manager/command_helpers.rb'
 require_relative './vim_mapping_manager/output_file.rb'
 require_relative './vim_mapping_manager/key_stroke.rb'
 require_relative './vim_mapping_manager/mappers/command_mapper.rb'
-
+require_relative './vim_mapping_manager/execute_ruby_mapping.rb'
 
 module VimMappingManager
   extend CommandHelpers
@@ -52,6 +52,10 @@ module VimMappingManager
 
   def self.visual(key, command = nil, desc:, filetype: nil, recursively: false, &block)
     find_key_stroke(key, filetype: filetype).set_visual(command || block, desc: desc, recursively: recursively)
+  end
+
+  def self.insert(key, command = nil, desc:, filetype: nil, execute: true, recursively: false, &block)
+    find_key_stroke(key, filetype: filetype).set_insert(command || block, desc: desc, execute: execute, recursively: recursively)
   end
 
   def self.normal(key, command = nil, desc:, filetype: nil, execute: true, recursively: false, &block)

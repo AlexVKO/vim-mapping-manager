@@ -180,6 +180,86 @@ RSpec.describe VimMappingManager do
       end
     end
 
+    context 'Insert commands' do
+      it 'renders simple insert commands' do
+        config_file do
+          insert 'X', ':RUN', desc: 'DO X'
+        end
+
+        expected = <<-EXPECTED
+        " DO X
+        inoremap X :RUN<CR>
+        EXPECTED
+
+        renders_properly(expected)
+      end
+
+      it 'renders Ruby mappings' do
+        config_file do
+          insert 'X', desc: 'DO X' do
+            puts 'Global'
+          end
+
+          insert 'X', desc: 'DO X', filetype: :ruby do
+            puts 'For ruby'
+          end
+        end
+
+        expected = <<-EXPECTED
+          " DO X
+          inoremap X :call ExecuteRubyMapping('X', 'all')<CR>
+
+          " DO X
+          autocmd FileType ruby inoremap X :call ExecuteRubyMapping('X', 'ruby')<CR>
+        EXPECTED
+
+        expect(ExecuteRubyMapping.fetch('X', 'ruby')).to respond_to :call
+        expect(ExecuteRubyMapping.fetch('X', 'all')).to respond_to :call
+        expect(ExecuteRubyMapping.commands.count).to be 2
+
+        renders_properly(expected)
+      end
+
+      it 'renders simple insert commands(without executing)' do
+        config_file do
+          insert 'X', ':RUN', desc: 'DO X', execute: false
+        end
+
+        expected = <<-EXPECTED
+        " DO X
+        inoremap X :RUN<CR>
+        EXPECTED
+
+        renders_properly(expected)
+      end
+
+      it 'renders simple insert commands(recursively)' do
+        config_file do
+          insert 'X', ':RUN', desc: 'DO X', recursively: true
+        end
+
+        expected = <<-EXPECTED
+        " DO X
+        imap X :RUN<CR>
+        EXPECTED
+
+        renders_properly(expected)
+      end
+
+      it 'renders insert commands with filetype' do
+        config_file do
+          insert 'X', ':RUN', desc: 'DO X', filetype: :ruby
+        end
+
+        expected = <<-EXPECTED
+        " DO X
+        autocmd FileType ruby inoremap X :RUN<CR>
+        EXPECTED
+
+        renders_properly(expected)
+      end
+    end
+
     it 'renders prefixes as namespaces' do
       config_file do
         prefix(name: 'NameSpaceX', desc: 'Just a namespace', filetype: :ruby) do
