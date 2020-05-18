@@ -236,6 +236,26 @@ RSpec.describe VimMappingManager do
 
       renders_properly(expected)
     end
+
+    it 'renders nested prefixes' do
+      config_file do
+        prefix('a', name: 'SamplePrefix', desc: 'Does stuff') do
+          prefix('b', name: 'SampleNestedPrefix', desc: 'Does more stuff') do
+            prefix('c', name: 'SampleNestedPrefix', desc: 'Does even more stuff') do
+              normal 'D', ':RUN', desc: 'DO C'
+            end
+          end
+        end
+      end
+
+      expected = <<-EXPECTED
+        " DO C
+        nnoremap <silent> abcD :RUN
+        call extend(g:which_key_map_sampleprefix['b']['c'], {'D':'Do c'})
+      EXPECTED
+
+      renders_properly(expected)
+    end
   end
 
   def config_file(&block)
