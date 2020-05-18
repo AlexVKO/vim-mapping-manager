@@ -24,7 +24,7 @@ module Mappers
     private
 
     def render_mapping
-      "#{indentation}#{autocmd}#{map_keyword} <silent> #{parent&.whole_key}#{key} #{command}"
+      "#{indentation}#{autocmd}#{map_keyword} #{parent&.whole_key}#{key} #{command}"
     end
 
     def render_which_key
