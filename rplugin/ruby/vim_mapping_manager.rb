@@ -5,12 +5,15 @@ Neovim.plugin do |plug|
   # Define an autocmd for the BufEnter event on Ruby files.
   plug.autocmd(:BufWritePost, pattern: "*managed_mappings.rb") do |nvim|
     VimMappingManager.save
-    nvim.command("echom 'Mappings updated ~/.config/nvim/managed_mappings.rb'")
+    nvim.command('checktime managed_mappings.vimrc')
+    nvim.command('source $HOME/.config/nvim/managed_mappings.vimrc')
+    nvim.command("echom 'Mappings updated $HOME/.config/nvim/managed_mappings.rb'")
   end
 
   plug.command(:EditMappings) do |nvim|
     VimMappingManager.reset!
-    nvim.command('tabnew ~/.config/nvim/managed_mappings.rb')
+    nvim.command('tabnew $HOME/.config/nvim/managed_mappings.rb')
+    nvim.command('vs $HOME/.config/nvim/managed_mappings.vimrc')
 
     example = <<-EXAMPLE
       # Example
