@@ -80,7 +80,7 @@ RSpec.describe VimMappingManager do
 
         expected = <<-EXPECTED
         " DO X
-        nnoremap X :RUN
+        nnoremap X :RUN<CR>
         EXPECTED
 
         renders_properly(expected)
@@ -121,8 +121,34 @@ RSpec.describe VimMappingManager do
 
         expected = <<-EXPECTED
         " DO X
-        xnoremap X :RUN
+        xnoremap X :RUN<CR>
         EXPECTED
+
+        renders_properly(expected)
+      end
+
+      it 'renders Ruby mappings' do
+        config_file do
+          visual 'X', desc: 'DO X' do
+            puts 'Global'
+          end
+
+          visual 'X', desc: 'DO X', filetype: :ruby do
+            puts 'For ruby'
+          end
+        end
+
+        expected = <<-EXPECTED
+          " DO X
+          xnoremap X :call ExecuteRubyMapping('X', 'all')<CR>
+
+          " DO X
+          autocmd FileType ruby xnoremap X :call ExecuteRubyMapping('X', 'ruby')<CR>
+        EXPECTED
+
+        expect(ExecuteRubyMapping.fetch('X', 'ruby')).to respond_to :call
+        expect(ExecuteRubyMapping.fetch('X', 'all')).to respond_to :call
+        expect(ExecuteRubyMapping.commands.count).to be 2
 
         renders_properly(expected)
       end
@@ -134,7 +160,7 @@ RSpec.describe VimMappingManager do
 
         expected = <<-EXPECTED
         " DO X
-        xmap X :RUN
+        xmap X :RUN<CR>
         EXPECTED
 
         renders_properly(expected)
@@ -147,7 +173,7 @@ RSpec.describe VimMappingManager do
 
         expected = <<-EXPECTED
         " DO X
-        autocmd FileType ruby xnoremap X :RUN
+        autocmd FileType ruby xnoremap X :RUN<CR>
         EXPECTED
 
         renders_properly(expected)
@@ -231,7 +257,7 @@ RSpec.describe VimMappingManager do
 
         expected = <<-EXPECTED
           " DO X
-          nnoremap pX :RUN
+          nnoremap pX :RUN<CR>
           call extend(g:which_key_map_sampleprefix, {'X':'DO X'})
         EXPECTED
 
@@ -296,8 +322,37 @@ RSpec.describe VimMappingManager do
 
         expected = <<-EXPECTED
           " DO X
-          xnoremap pX :RUN
+          xnoremap pX :RUN<CR>
         EXPECTED
+
+        renders_properly(expected)
+      end
+
+      it 'renders Ruby mappings' do
+        config_file do
+          prefix('p', name: 'SamplePrefix', desc: 'Does stuff') do
+            visual 'X', desc: 'DO X' do
+              puts 'Global'
+            end
+
+            visual 'X', desc: 'DO X', filetype: :ruby do
+              puts 'For ruby'
+            end
+          end
+        end
+
+        expected = <<-EXPECTED
+          " DO X
+          xnoremap pX :call ExecuteRubyMapping('pX', 'all')<CR>
+
+          " DO X
+          autocmd FileType ruby xnoremap pX :call ExecuteRubyMapping('pX', 'ruby')<CR>
+        EXPECTED
+
+        puts ExecuteRubyMapping.commands
+        expect(ExecuteRubyMapping.fetch('pX', 'ruby')).to respond_to :call
+        expect(ExecuteRubyMapping.fetch('pX', 'all')).to respond_to :call
+        expect(ExecuteRubyMapping.commands.count).to be 2
 
         renders_properly(expected)
       end
@@ -311,7 +366,7 @@ RSpec.describe VimMappingManager do
 
         expected = <<-EXPECTED
         " DO X
-        xmap pX :RUN
+        xmap pX :RUN<CR>
         EXPECTED
 
         renders_properly(expected)
@@ -326,7 +381,7 @@ RSpec.describe VimMappingManager do
 
         expected = <<-EXPECTED
           " DO X
-          autocmd FileType ruby xnoremap pX :RUN
+          autocmd FileType ruby xnoremap pX :RUN<CR>
         EXPECTED
 
         renders_properly(expected)
@@ -341,7 +396,7 @@ RSpec.describe VimMappingManager do
 
         expected = <<-EXPECTED
           " DO X
-          autocmd FileType ruby xnoremap pX :RUN
+          autocmd FileType ruby xnoremap pX :RUN<CR>
         EXPECTED
 
         renders_properly(expected)
@@ -435,7 +490,7 @@ RSpec.describe VimMappingManager do
 
         expected = <<-EXPECTED
           " DO X
-          xnoremap <leader>X :RUN
+          xnoremap <leader>X :RUN<CR>
         EXPECTED
 
         renders_properly(expected)
@@ -450,7 +505,7 @@ RSpec.describe VimMappingManager do
 
         expected = <<-EXPECTED
           " DO X
-          autocmd FileType ruby xnoremap <leader>X :RUN
+          autocmd FileType ruby xnoremap <leader>X :RUN<CR>
         EXPECTED
 
         renders_properly(expected)

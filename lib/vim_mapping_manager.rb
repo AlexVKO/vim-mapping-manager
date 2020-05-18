@@ -50,7 +50,7 @@ module VimMappingManager
 
   private
 
-  def self.visual(key, command, desc:, filetype: nil, recursively: false, &block)
+  def self.visual(key, command = nil, desc:, filetype: nil, recursively: false, &block)
     find_key_stroke(key, filetype: filetype).set_visual(command || block, desc: desc, recursively: recursively)
   end
 

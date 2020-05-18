@@ -75,12 +75,12 @@ class Prefix
   end
 
   # Create a visual command
-  def visual(key, command, desc:, filetype: nil, recursively: false)
+  def visual(key, command = nil, desc:, filetype: nil, recursively: false, &block)
     key_stroke = find_or_create_keystroke(key, filetype: filetype || keystroke.filetype)
 
     raise("Mapping for #{key} already exists") if key_stroke.visual
 
-    key_stroke.set_visual(command, desc: desc, recursively: recursively)
+    key_stroke.set_visual(command || block, desc: desc, recursively: recursively)
   end
 
   def name_parameterize

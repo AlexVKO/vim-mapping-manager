@@ -12,4 +12,4 @@ nnoremap <leader> :<c-u>WhichKey '<leader>'<CR>
 vnoremap <leader> :<c-u>WhichKeyVisual '<leader>'<CR>
 
 " DO X
-autocmd FileType ruby xnoremap <leader>X :RUN
+autocmd FileType ruby xnoremap <leader>X :RUN<CR>

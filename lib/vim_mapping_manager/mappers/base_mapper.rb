@@ -28,7 +28,13 @@ module Mappers
     private
 
     def render_mapping
-      "#{indentation}#{autocmd}#{map_keyword} #{parent&.whole_key}#{key} #{command}"
+      mapping = "#{indentation}#{autocmd}#{map_keyword} #{parent&.whole_key}#{key} #{command}"
+
+      if command.start_with?(':')
+        mapping + "<CR>"
+      else
+        mapping
+      end
     end
 
     def render_which_key

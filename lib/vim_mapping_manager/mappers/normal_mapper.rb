@@ -9,13 +9,5 @@ module Mappers
         'nnoremap'
       end
     end
-
-    def render_mapping
-      if command.start_with?(':') && execute
-        super + "<CR>"
-      else
-        super
-      end
-    end
   end
 end
