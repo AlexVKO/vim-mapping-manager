@@ -4,14 +4,14 @@ class Prefix
     :desc,
     :key_strokes,
     :keystroke,
-    :is_sub_prefix 
+    :is_sub_prefix
 
   def initialize(name, keystroke, desc: nil)
     @name = name.to_s
     @keystroke = keystroke
     @desc = desc
     @key_strokes = {}
-      "g:which_key_map_#{name_parameterize}"
+    "g:which_key_map_#{name_parameterize}"
   end
 
   def parent_key
@@ -25,7 +25,7 @@ class Prefix
   def key
     keystroke.key
   end
-  
+
   # # ex: g:which_key_map_prefixname
   def which_key_map
     parent = keystroke.parent
@@ -33,21 +33,25 @@ class Prefix
 
     if from_parent
       @is_sub_prefix = true
-      if key != ''
+      if key != '' && !just_a_namespace?
         from_parent + "['#{key}']"
       else
-        from_parent 
+        from_parent
       end
     else
-      "g:which_key_map_#{name_parameterize}"
+      if just_a_namespace?
+        nil
+      else
+        "g:which_key_map_#{name_parameterize}"
+      end
     end
   end
 
   def find_or_create_keystroke(key, filetype:)
-    key_strokes[key+filetype.to_s] ||= 
+    key_strokes[key+filetype.to_s] ||=
       KeyStroke.new(key,
                     parent: keystroke,
-                    indentation_level: keystroke.indentation_level, 
+                    indentation_level: keystroke.indentation_level,
                     filetype: filetype
                    )
   end
@@ -114,18 +118,23 @@ class Prefix
     end
   end
 
+  def just_a_namespace?
+    key == ''
+  end
+
   def render_header
     [
       "",
       "",
       "\" ----------------------------------------------------------------",
-      "\" #{key == '' ? 'Namespace' : 'Prefix'} #{name}",
-      "\" Key #{parent_key}#{keystroke.key}",
+      "\" #{just_a_namespace? ? 'Namespace' : 'Prefix'} #{name}",
+      (keystroke.key == '' ? nil : "\" Key #{parent_key}#{keystroke.key}"),
       *render_filetype,
       "\" #{desc}",
       '" ----------------------------------------------------------------',
       *render_which_prefix,
-    ].map { |line| (' ' * keystroke.indentation_level) + line }
+    ].compact
+      .map { |line| (' ' * keystroke.indentation_level) + line }
       .each { |line| OutputFile.write(line) }
   end
 

@@ -127,6 +127,27 @@ RSpec.describe VimMappingManager do
         renders_properly(expected)
       end
     end
+
+    it 'renders prefixes as namespaces' do
+      config_file do
+        prefix(name: 'NameSpaceX', desc: 'Just a namespace', filetype: :ruby) do
+          normal 'C', ':RUN', desc: 'DO C'
+        end
+      end
+
+      expected = <<-EXPECTED
+        " ----------------------------------------------------------------
+        " Namespace NameSpaceX
+        " Filetype: ruby
+        " Just a namespace
+        " ----------------------------------------------------------------
+
+        " DO C
+        autocmd FileType ruby nnoremap C :RUN<CR>
+      EXPECTED
+
+      renders_properly(expected)
+    end
   end
 
   context 'with Prefix' do
