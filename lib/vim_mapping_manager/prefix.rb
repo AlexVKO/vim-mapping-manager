@@ -83,12 +83,18 @@ class Prefix
     name.downcase.strip.gsub(/ +/, '_').gsub(/[^_A-Za-z]/, '')
   end
 
+  def autocmd
+    if (filetype = keystroke.filetype)
+      "autocmd FileType #{filetype} "
+    end
+  end
+
   def render_which_prefix
     return [] if key == ''
 
     if which_key_map && is_sub_prefix
       [
-        "let #{which_key_map} = { 'name' : '+#{name}' }"
+        "#{autocmd}let #{which_key_map} = { 'name' : '+#{name}' }"
       ]
     else
       [

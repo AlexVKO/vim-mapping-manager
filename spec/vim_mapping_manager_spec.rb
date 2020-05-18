@@ -141,7 +141,7 @@ RSpec.describe VimMappingManager do
         expected = <<-EXPECTED
           " DO X
           nnoremap pX :RUN<CR>
-          call extend(g:which_key_map_sampleprefix, {'X':'Do x'})
+          call extend(g:which_key_map_sampleprefix, {'X':'DO X'})
         EXPECTED
 
         renders_properly(expected)
@@ -157,7 +157,7 @@ RSpec.describe VimMappingManager do
         expected = <<-EXPECTED
           " DO X
           nnoremap pX :RUN
-          call extend(g:which_key_map_sampleprefix, {'X':'Do x'})
+          call extend(g:which_key_map_sampleprefix, {'X':'DO X'})
         EXPECTED
 
         renders_properly(expected)
@@ -188,7 +188,7 @@ RSpec.describe VimMappingManager do
         expected = <<-EXPECTED
           " DO X
           autocmd FileType ruby nnoremap pX :RUN<CR>
-          autocmd FileType ruby call extend(g:which_key_map_sampleprefix, {'X':'Do x'})
+          autocmd FileType ruby call extend(g:which_key_map_sampleprefix, {'X':'DO X'})
         EXPECTED
 
         renders_properly(expected)
@@ -204,7 +204,7 @@ RSpec.describe VimMappingManager do
         expected = <<-EXPECTED
           " DO X
           autocmd FileType ruby nnoremap pX :RUN<CR>
-          autocmd FileType ruby call extend(g:which_key_map_sampleprefix, {'X':'Do x'})
+          autocmd FileType ruby call extend(g:which_key_map_sampleprefix, {'X':'DO X'})
         EXPECTED
 
         renders_properly(expected)
@@ -308,7 +308,7 @@ RSpec.describe VimMappingManager do
       expected = <<-EXPECTED
         " DO C
         nnoremap abcD :RUN<CR>
-        call extend(g:which_key_map_sampleprefix['b']['c'], {'D':'Do c'})
+        call extend(g:which_key_map_sampleprefix['b']['c'], {'D':'DO C'})
       EXPECTED
 
       renders_properly(expected)
@@ -327,7 +327,7 @@ RSpec.describe VimMappingManager do
         expected = <<-EXPECTED
           " DO X
           nnoremap <leader>X :RUN<CR>
-          call extend(g:which_key_map, {'X':'Do x'})
+          call extend(g:which_key_map, {'X':'DO X'})
         EXPECTED
 
         renders_properly(expected)
@@ -343,7 +343,7 @@ RSpec.describe VimMappingManager do
         expected = <<-EXPECTED
           " DO X
           autocmd FileType ruby nnoremap <leader>X :RUN<CR>
-          autocmd FileType ruby call extend(g:which_key_map, {'X':'Do x'})
+          autocmd FileType ruby call extend(g:which_key_map, {'X':'DO X'})
         EXPECTED
 
         renders_properly(expected)
@@ -419,7 +419,7 @@ RSpec.describe VimMappingManager do
       expected = <<-EXPECTED
         " DO C
         nnoremap <leader>abC :RUN<CR>
-        call extend(g:which_key_map['a']['b'], {'C':'Do c'})
+        call extend(g:which_key_map['a']['b'], {'C':'DO C'})
       EXPECTED
 
       renders_properly(expected)
@@ -444,7 +444,7 @@ RSpec.describe VimMappingManager do
 
         " DO C
         autocmd FileType ruby nnoremap aC :RUN<CR>
-        autocmd FileType ruby call extend(g:which_key_map_samplenestedprefix, {'C':'Do c'})
+        autocmd FileType ruby call extend(g:which_key_map_samplenestedprefix, {'C':'DO C'})
       EXPECTED
 
       renders_properly(expected)

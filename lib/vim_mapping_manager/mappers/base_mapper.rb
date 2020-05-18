@@ -17,7 +17,9 @@ module Mappers
     def_delegators :@keystroke, :key, :parent
 
     def render
-      OutputFile.write "\n#{indentation}\" #{desc}"
+      if desc_presence
+        OutputFile.write "\n#{indentation}\" #{desc_presence}"
+      end
 
       OutputFile.write render_mapping
       OutputFile.write render_which_key if self.to_s.include?('Normal')
@@ -47,7 +49,7 @@ module Mappers
 
     def desc_presence
       return if desc.nil? || desc == ''
-      desc.capitalize
+      desc
     end
 
   end
