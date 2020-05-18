@@ -5,5 +5,9 @@ module Mappers
     def map_keyword
       'nnoremap'
     end
+
+    def render_mapping
+      super + "<CR>"
+    end
   end
 end

@@ -41,7 +41,7 @@ RSpec.describe VimMappingManager do
 
         expected = <<-EXPECTED
         " DO X
-        nnoremap <silent> X :RUN
+        nnoremap <silent> X :RUN<CR>
         EXPECTED
 
         renders_properly(expected)
@@ -54,7 +54,7 @@ RSpec.describe VimMappingManager do
 
         expected = <<-EXPECTED
         " DO X
-        autocmd FileType ruby nnoremap <silent> X :RUN
+        autocmd FileType ruby nnoremap <silent> X :RUN<CR>
         EXPECTED
 
         renders_properly(expected)
@@ -101,7 +101,7 @@ RSpec.describe VimMappingManager do
 
         expected = <<-EXPECTED
           " DO X
-          nnoremap <silent> pX :RUN
+          nnoremap <silent> pX :RUN<CR>
           call extend(g:which_key_map_sampleprefix, {'X':'Do x'})
         EXPECTED
 
@@ -117,7 +117,7 @@ RSpec.describe VimMappingManager do
 
         expected = <<-EXPECTED
           " DO X
-          autocmd FileType ruby nnoremap <silent> pX :RUN
+          autocmd FileType ruby nnoremap <silent> pX :RUN<CR>
           autocmd FileType ruby call extend(g:which_key_map_sampleprefix, {'X':'Do x'})
         EXPECTED
 
@@ -133,7 +133,7 @@ RSpec.describe VimMappingManager do
 
         expected = <<-EXPECTED
           " DO X
-          autocmd FileType ruby nnoremap <silent> pX :RUN
+          autocmd FileType ruby nnoremap <silent> pX :RUN<CR>
           autocmd FileType ruby call extend(g:which_key_map_sampleprefix, {'X':'Do x'})
         EXPECTED
 
@@ -223,7 +223,7 @@ RSpec.describe VimMappingManager do
 
       expected = <<-EXPECTED
         " DO C
-        nnoremap <silent> abcD :RUN
+        nnoremap <silent> abcD :RUN<CR>
         call extend(g:which_key_map_sampleprefix['b']['c'], {'D':'Do c'})
       EXPECTED
 
@@ -242,7 +242,7 @@ RSpec.describe VimMappingManager do
 
         expected = <<-EXPECTED
           " DO X
-          nnoremap <silent> <leader>X :RUN
+          nnoremap <silent> <leader>X :RUN<CR>
           call extend(g:which_key_map, {'X':'Do x'})
         EXPECTED
 
@@ -258,7 +258,7 @@ RSpec.describe VimMappingManager do
 
         expected = <<-EXPECTED
           " DO X
-          autocmd FileType ruby nnoremap <silent> <leader>X :RUN
+          autocmd FileType ruby nnoremap <silent> <leader>X :RUN<CR>
           autocmd FileType ruby call extend(g:which_key_map, {'X':'Do x'})
         EXPECTED
 
@@ -313,7 +313,7 @@ RSpec.describe VimMappingManager do
         if !exists('g:which_key_map')
           let g:which_key_map = {}
         endif
-        call which_key#register('<leader>', 'g:which_key_map')
+        call which_key#register('<space>', 'g:which_key_map')
         nnoremap <leader> :<c-u>WhichKey '<leader>'<CR>
         vnoremap <leader> :<c-u>WhichKeyVisual '<leader>'<CR>
       EXPECTED
@@ -334,7 +334,7 @@ RSpec.describe VimMappingManager do
 
       expected = <<-EXPECTED
         " DO C
-        nnoremap <silent> <leader>abC :RUN
+        nnoremap <silent> <leader>abC :RUN<CR>
         call extend(g:which_key_map['a']['b'], {'C':'Do c'})
       EXPECTED
 

@@ -17,18 +17,18 @@ module Mappers
     def render
       OutputFile.write "\n#{indentation}\" #{desc}"
 
-      render_mapping
-      render_which_key if self.to_s.include?('Normal')
+      OutputFile.write render_mapping
+      OutputFile.write render_which_key if self.to_s.include?('Normal')
     end
 
     private
 
     def render_mapping
-      OutputFile.write "#{indentation}#{autocmd}#{map_keyword} <silent> #{parent&.whole_key}#{key} #{command}"
+      "#{indentation}#{autocmd}#{map_keyword} <silent> #{parent&.whole_key}#{key} #{command}"
     end
 
     def render_which_key
-      OutputFile.write "#{indentation}#{autocmd}call extend(#{parent&.which_key_map}, {'#{key}':'#{desc_presence || 'which_key_ignore'}'})"
+      "#{indentation}#{autocmd}call extend(#{parent&.which_key_map}, {'#{key}':'#{desc_presence || 'which_key_ignore'}'})"
     end
 
     def autocmd
