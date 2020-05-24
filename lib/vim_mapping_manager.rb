@@ -17,13 +17,17 @@ module VimMappingManager
     File.expand_path('~/.config/nvim/managed_mappings.rb')
   end
 
-  def self.save
+  def self.load
     reset!
     file = File.read(file_config_path)
     call do
       instance_eval file
     end
     render
+  end
+
+  def self.load_and_save
+    load
     OutputFile.save
   end
 

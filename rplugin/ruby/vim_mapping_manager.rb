@@ -2,9 +2,11 @@ require 'neovim'
 require_relative '../../lib/vim_mapping_manager.rb'
 
 Neovim.plugin do |plug|
+  VimMappingManager.load
+
   # Define an autocmd for the BufEnter event on Ruby files.
   plug.autocmd(:BufWritePost, pattern: "*managed_mappings.rb") do |nvim|
-    VimMappingManager.save
+    VimMappingManager.load_and_save
     nvim.command('source $HOME/.config/nvim/managed_mappings.vimrc')
     nvim.command("echom 'Mappings updated $HOME/.config/nvim/managed_mappings.rb'")
     nvim.command('checktime managed_mappings.vimrc')
@@ -13,7 +15,7 @@ Neovim.plugin do |plug|
   # Define a function called "Sum" which adds two numbers. This function is
   # executed synchronously, so the result of the block will be returned to nvim.
   plug.function(:ExecuteRubyMapping, nargs: 2) do |nvim, key, filetype|
-    nvim.command("echom 'ExecuteRubyMapping BEFORE'")
+    nvim.command("echom 'ExecuteRubyMapping BEFORE #{key}, #{filetype} <<<<<<'")
     ExecuteRubyMapping.fetch(key, filetype).call(nvim)
     nvim.command("echom 'ExecuteRubyMapping AFTER'")
   end

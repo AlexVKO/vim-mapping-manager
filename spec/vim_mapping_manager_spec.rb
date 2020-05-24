@@ -49,11 +49,11 @@ RSpec.describe VimMappingManager do
 
       it 'renders Ruby mappings' do
         config_file do
-          normal 'X', desc: 'DO X' do
+          normal 'X', desc: 'DO X' do |nvim|
             puts 'Global'
           end
 
-          normal 'X', desc: 'DO X', filetype: :ruby do
+          normal 'X', desc: 'DO X', filetype: :ruby do |nvim|
             puts 'For ruby'
           end
         end
@@ -465,7 +465,6 @@ RSpec.describe VimMappingManager do
         renders_properly(expected)
       end
 
-
       it 'renders simple visual commands(recursively)' do
         config_file do
           prefix('p', name: 'SamplePrefix', desc: 'Does stuff') do
@@ -568,6 +567,34 @@ RSpec.describe VimMappingManager do
           nnoremap <leader>X :RUN<CR>
           call extend(g:which_key_map, {'X':'DO X'})
         EXPECTED
+
+        renders_properly(expected)
+      end
+
+      it 'renders Ruby mappings' do
+        config_file do
+          leader('<space>') do
+            visual 'X', desc: 'DO X' do
+              puts 'Global'
+            end
+
+            visual 'X', desc: 'DO X', filetype: :ruby do
+              puts 'For ruby'
+            end
+          end
+        end
+
+        expected = <<-EXPECTED
+          " DO X
+          xnoremap <leader>X :call ExecuteRubyMapping('leaderX', 'all')<CR>
+
+          " DO X
+          autocmd FileType ruby xnoremap <leader>X :call ExecuteRubyMapping('leaderX', 'ruby')<CR>
+        EXPECTED
+
+        expect(ExecuteRubyMapping.fetch('<leader>X', 'ruby')).to respond_to :call
+        expect(ExecuteRubyMapping.fetch('<leader>X', 'all')).to respond_to :call
+        expect(ExecuteRubyMapping.commands.count).to be 2
 
         renders_properly(expected)
       end
