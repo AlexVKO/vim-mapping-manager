@@ -315,7 +315,7 @@ RSpec.describe VimMappingManager do
 
       it 'renders Ruby mappings' do
         config_file do
-          prefix('p', name: 'SamplePrefix', desc: 'Does stuff') do
+          prefix('!', name: 'SamplePrefix', desc: 'Does stuff') do
             normal 'X', desc: 'DO X' do
               puts 'Global'
             end
@@ -328,14 +328,14 @@ RSpec.describe VimMappingManager do
 
         expected = <<-EXPECTED
           " DO X
-          nnoremap pX :call ExecuteRubyMapping('pX', 'all')<CR>
+          nnoremap !X :call ExecuteRubyMapping('!X', 'all')<CR>
 
           " DO X
-          autocmd FileType ruby nnoremap pX :call ExecuteRubyMapping('pX', 'ruby')<CR>
+          autocmd FileType ruby nnoremap !X :call ExecuteRubyMapping('!X', 'ruby')<CR>
         EXPECTED
 
-        expect(ExecuteRubyMapping.fetch('pX', 'ruby')).to respond_to :call
-        expect(ExecuteRubyMapping.fetch('pX', 'all')).to respond_to :call
+        expect(ExecuteRubyMapping.fetch('!X', 'ruby')).to respond_to :call
+        expect(ExecuteRubyMapping.fetch('!X', 'all')).to respond_to :call
         expect(ExecuteRubyMapping.commands.count).to be 2
 
         renders_properly(expected)
